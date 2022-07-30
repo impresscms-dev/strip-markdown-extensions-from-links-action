@@ -1,7 +1,7 @@
 name: 'Strip MarkDown extensions from links action'
 description: "GitHub action to strip Markdown file extensions from links (useful for making links work with GitHub wiki)"
 branding:
-  icon: type
+  icon: delete
   color: orange
 
 inputs:
