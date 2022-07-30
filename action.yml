@@ -1,0 +1,14 @@
+name: 'Strip MarkDown extensions from links action'
+description: "GitHub action to strip Markdown file extensions from links (useful for making links work with GitHub wiki)"
+branding:
+  icon: type
+  color: orange
+
+inputs:
+  path:
+    description: Where to look for files to do operation
+    required: true
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

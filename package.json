@@ -1,0 +1,47 @@
+{
+  "name": "strip-markdown-extensions-from-links-action",
+  "version": "0.0.0",
+  "description": "GitHub action to strip Markdown file extensions from links (useful for making links work with GitHub wiki)",
+  "main": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:impresscms-dev/strip-markdown-extensions-from-links-action.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "format": "prettier --write **/*.ts",
+    "format-check": "prettier --check **/*.ts",
+    "lint": "eslint src/**/*.ts",
+    "pack": "ncc build --minify",
+    "all": "npm install && npm run build && npm run format && npm run lint && npm run pack",
+    "fast-all": "npm install && npm run build && npm run pack"
+  },
+  "keywords": [
+    "github actions",
+    "markdown",
+    "strip",
+    "extensions"
+  ],
+  "author": "Raimondas Rimkevičius (aka MekDrop)",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.8.2",
+    "@actions/github": "^5.0.3",
+    "recursive-readdir-sync": "^1.0.6",
+    "transform-markdown-links": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.6.1",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "@vercel/ncc": "^0.34.0",
+    "eslint": "^8.20.0",
+    "jest": "^28.1.3",
+    "eslint-plugin-github": "^4.3.7",
+    "eslint-plugin-jest": "^26.6.0",
+    "prettier": "^2.6.2",
+    "semver": "^7.3.7",
+    "typescript": "^4.7.3"
+  }
+}
