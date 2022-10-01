@@ -26,7 +26,7 @@
   "author": "Raimondas Rimkevičius (aka MekDrop)",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.9.1",
+    "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
     "recursive-readdir-sync": "^1.0.6",
     "transform-markdown-links": "^2.0.0"
