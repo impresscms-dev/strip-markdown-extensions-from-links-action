@@ -18,7 +18,7 @@ export function processLink (link: string): string {
     return link
   }
 
-  return link.substring(0, link.length - 3)
+  return encodeURIComponent(link.substring(0, link.length - 3))
 }
 
 export default {
