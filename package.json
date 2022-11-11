@@ -8,13 +8,13 @@
     "url": "git@github.com:impresscms-dev/strip-markdown-extensions-from-links-action.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "test": "jest",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
     "pack": "ncc build --minify",
-    "all": "npm install && npm run build && npm run format && npm run lint && npm run pack",
+    "all": "npm install && npm run build && npm run format && npm run lint && npm test && npm run pack",
     "fast-all": "npm install && npm run build && npm run pack"
   },
   "keywords": [
