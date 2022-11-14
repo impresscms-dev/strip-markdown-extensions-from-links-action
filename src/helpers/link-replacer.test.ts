@@ -23,14 +23,15 @@ describe('link-replacer', () => {
     expect(newContent).toBe("[link](to-a-file#my-headline)")
   })
   // Does not work due to used transform-markdown-links dependency
-  // test('check that link references work', () => {
-  //   const newContent = linkReplacer.transformMarkdownLinks(`[link][some-reference]
-  //  
-  //   [some-reference]: to-a-file.md#my-headline`);
-  //   expect(newContent).toBe(`[link][some-reference]
-  //  
-  //   [some-reference]: to-a-file#my-headline`)
-  // });
+  test('check that link references work', () => {
+    const newContent = linkReplacer.transformMarkdownLinks(`
+[link][some-reference]
+
+[some-reference]: to-a-file.md#my-headline`)
+    expect(newContent).toBe(`
+[link][some-reference]
+
+[some-reference]: to-a-file#my-headline`)})
   afterAll(() => {
     mock.restore()    
   })
