@@ -11,8 +11,8 @@ export function transformMarkdownLinks(oldContent: string): string {
   return transformLinks(oldContent,processLink)
 }
 function processLink (link: string): string {
-  const [potentialFile, fragment] = link.split("#")
-  
+  const [potentialEncodedFile, fragment] = link.split("#")
+  const potentialFile = decodeURIComponent(potentialEncodedFile)
   const fullPath: string = filesPath + '/' + potentialFile
 
   if (!existsSync(fullPath)) {

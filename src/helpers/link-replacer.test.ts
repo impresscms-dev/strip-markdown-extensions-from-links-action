@@ -18,6 +18,18 @@ describe('link-replacer', () => {
     const newContent = linkReplacer.transformMarkdownLinks("[link](special:characters-included.md)")
     expect(newContent).toBe("[link](special%3Acharacters-included)")
   })
+  test('do handle already escaped characters correctly', () => {
+    const newContent = linkReplacer.transformMarkdownLinks("[link](special%3Acharacters-included.md)")
+    expect(newContent).toBe("[link](special%3Acharacters-included)")
+  })
+  test('web url not replaced', () => {    
+    const original = "[link](https://search.example.com#somePointer)"
+    expect(linkReplacer.transformMarkdownLinks(original)).toBe(original)
+  })
+  test('not existing file not replaced', () => {
+    const original = "[link](does:-not-exist.md#some-heading)"
+    expect(linkReplacer.transformMarkdownLinks(original)).toBe(original)
+  })
   test('markdown file with fragment', () => {
     const newContent = linkReplacer.transformMarkdownLinks("[link](to-a-file.md#my-headline)")
     expect(newContent).toBe("[link](to-a-file#my-headline)")
@@ -35,4 +47,5 @@ describe('link-replacer', () => {
   afterAll(() => {
     mock.restore()    
   })
+  
 })
