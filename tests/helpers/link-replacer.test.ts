@@ -1,5 +1,5 @@
 import {describe, expect, test, afterAll} from '@jest/globals'
-import linkReplacer from "./link-replacer"
+import linkReplacer from "../../src/helpers/link-replacer"
 import mock from "mock-fs"
 mock({
   'test-dir': {

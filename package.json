@@ -12,9 +12,9 @@
     "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint **/*.ts",
     "pack": "ncc build --minify",
-    "all": "npm install && npm run build && npm run format && npm run lint && npm test && npm run pack",
+    "all": "npm install && npm test && npm run build && npm run format && npm run lint && npm run pack",
     "fast-all": "npm install && npm run build && npm run pack"
   },
   "keywords": [
