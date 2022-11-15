@@ -44,7 +44,7 @@ jobs:
         run: npm run lint
 
       - name: Tests
-        run: npm run test
+        run: npm test
 
       - name: Pack
         run: npm run pack
