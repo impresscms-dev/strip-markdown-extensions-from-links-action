@@ -10,9 +10,18 @@ export function setFilesPath(path: string): void {
 export function transformMarkdownLinks(oldContent: string): string {
   return transformLinks(oldContent,processLink)
 }
+
+function safeDecodeURIComponent(str: string): string {
+  try {
+    return decodeURIComponent(str)
+  } catch (e) {
+    return str
+  }
+}
+
 function processLink (link: string): string {
   const [potentialEncodedFile, fragment] = link.split("#")
-  const potentialFile = decodeURIComponent(potentialEncodedFile)
+  const potentialFile = safeDecodeURIComponent(potentialEncodedFile)
   const fullPath: string = filesPath + '/' + potentialFile
 
   if (!existsSync(fullPath)) {

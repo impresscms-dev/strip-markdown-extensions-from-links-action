@@ -4,7 +4,7 @@ import mock from "mock-fs"
 mock({
   'test-dir': {
     'to-a-file.md' : '',
-    'special:characters-included.md' : ''
+    'special:characters-included.md' : '',
   }
   
 })
@@ -21,6 +21,10 @@ describe('link-replacer', () => {
   test('do handle already escaped characters correctly', () => {
     const newContent = linkReplacer.transformMarkdownLinks("[link](special%3Acharacters-included.md)")
     expect(newContent).toBe("[link](special%3Acharacters-included)")
+  })
+  test('incorrect special characters (non existing file)', () => {
+    const newContent = linkReplacer.transformMarkdownLinks("[link](incorrect-%E0%A4%A-special-characters-included.md)")
+    expect(newContent).toBe("[link](incorrect-%E0%A4%A-special-characters-included.md)")
   })
   test('web url not replaced', () => {    
     const original = "[link](https://search.example.com#somePointer)"
