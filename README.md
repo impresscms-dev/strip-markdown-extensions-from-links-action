@@ -41,7 +41,7 @@ jobs:
           output_path: ./docs/
           
       - name: Stripping file extensions...
-        uses: impresscms-dev/strip-markdown-extensions-from-links-action@v0.1
+        uses: impresscms-dev/strip-markdown-extensions-from-links-action@v0.3
         with:
           path: ./docs/
           
