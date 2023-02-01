@@ -32,7 +32,7 @@
     "transform-markdown-links": "^2.0.0"
   },
   "devDependencies": {
-    "@jest/globals": "^29.3.1",
+    "@jest/globals": "^29.4.1",
     "@types/mock-fs": "^4.13.1",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
