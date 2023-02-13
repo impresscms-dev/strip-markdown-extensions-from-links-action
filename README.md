@@ -1,3 +1,4 @@
+
 [![License](https://img.shields.io/github/license/impresscms-dev/strip-markdown-extensions-from-links-action.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/release/impresscms-dev/strip-markdown-extensions-from-links-action.svg)](https://github.com/impresscms-dev/strip-markdown-extensions-from-links-action/releases)
 
@@ -41,7 +42,7 @@ jobs:
           output_path: ./docs/
           
       - name: Stripping file extensions...
-        uses: impresscms-dev/strip-markdown-extensions-from-links-action@v0.3
+        uses: impresscms-dev/strip-markdown-extensions-from-links-action@v1.0.0
         with:
           path: ./docs/
           
