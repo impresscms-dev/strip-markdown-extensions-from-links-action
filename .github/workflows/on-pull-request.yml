@@ -31,7 +31,7 @@ jobs:
         run: npm install
 
       - name: Tests
-        run: npm test
+        run: npm run test
 
   build:
 
@@ -68,9 +68,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
-
-      - name: Tests
-        run: npm test
 
       - name: Pack
         run: npm run pack
