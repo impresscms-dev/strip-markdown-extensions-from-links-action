@@ -29,7 +29,7 @@
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
     "recursive-readdir-sync": "^1.0.6",
-    "transform-markdown-links": "^2.0.0"
+    "transform-markdown-links": "^2.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.4.1",
