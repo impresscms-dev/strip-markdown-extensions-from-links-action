@@ -35,7 +35,7 @@
     "@jest/globals": "^29.4.1",
     "@types/mock-fs": "^4.13.1",
     "@types/node": "^20.2.5",
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^5.50.0",
     "@vercel/ncc": "^0.38.0",
     "eslint": "^8.33.0",
