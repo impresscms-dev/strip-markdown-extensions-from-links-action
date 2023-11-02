@@ -97,7 +97,7 @@ jobs:
           path: dist/
           
       - name: Auto commiting changes...
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Automatically builded and updated
           file_pattern: dist/*.js
