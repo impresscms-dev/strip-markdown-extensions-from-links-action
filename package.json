@@ -1,6 +1,6 @@
 {
   "name": "strip-markdown-extensions-from-links-action",
-  "version": "0.0.0",
+  "version": "1.2.0",
   "description": "GitHub action to strip Markdown file extensions from links (useful for making links work with GitHub wiki)",
   "main": "src/index.ts",
   "repository": {
