@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: write
@@ -19,8 +20,6 @@ jobs:
     steps:
       - name: Checkouting code...
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -46,8 +45,6 @@ jobs:
     steps:
       - name: Checkouting code...
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -84,9 +81,6 @@ jobs:
     steps:
       - name: Checkouting code...
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Downloading build artifact....
         uses: actions/download-artifact@v4
@@ -94,26 +88,26 @@ jobs:
           name: build
           path: dist/
 
+      - name: List files in dist directory
+        run: ls -la dist/
+
       - name: Auto commiting changes...
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'Automatically built and updated'
-          file_pattern: dist/*.*
-          skip_fetch: true
-          skip_checkout: true
+          file_pattern: 'dist/*.*'
           commit_options: '--no-verify'
+          push_options: '--force'
 
   dependabot:
     needs:
       - build
-      - commit_and_push
     permissions:
       pull-requests: write
       contents: write
     runs-on: ubuntu-latest
-    # Checking the actor will prevent your Action run failing on non-Dependabot
-    # PRs but also ensures that it only does work for Dependabot PRs.
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    # Only run for Dependabot PRs
+    if: github.actor == 'dependabot[bot]'
     steps:
       # This first step will fail if there's no metadata and so the approval
       # will not occur.
