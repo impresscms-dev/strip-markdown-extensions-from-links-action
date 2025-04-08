@@ -5,7 +5,9 @@ on:
     branches:
       - main
 
-permissions: write-all
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   test:
@@ -18,7 +20,7 @@ jobs:
       - name: Checkouting code...
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -45,7 +47,7 @@ jobs:
       - name: Checkouting code...
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -83,7 +85,8 @@ jobs:
       - name: Checkouting code...
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Downloading build artifact....
         uses: actions/download-artifact@v4
@@ -94,10 +97,11 @@ jobs:
       - name: Auto commiting changes...
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Automatically builded and updated
+          commit_message: 'Automatically built and updated'
           file_pattern: dist/*.*
           skip_fetch: true
           skip_checkout: true
+          commit_options: '--no-verify'
 
   dependabot:
     needs:
