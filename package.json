@@ -1,21 +1,21 @@
 {
   "name": "strip-markdown-extensions-from-links-action",
-  "version": "1.2.0",
+  "version": "0.0.0",
   "description": "GitHub action to strip Markdown file extensions from links (useful for making links work with GitHub wiki)",
-  "main": "src/index.ts",
+  "main": "src/index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git@github.com:impresscms-dev/strip-markdown-extensions-from-links-action.git"
   },
   "scripts": {
-    "test": "jest",
-    "build": "tsc -p tsconfig.build.json",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
-    "lint": "eslint **/*.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "format": "prettier --write **/*.js",
+    "format-check": "prettier --check **/*.js",
+    "lint": "eslint **/*.js",
     "pack": "ncc build --minify",
-    "all": "npm install && npm run build && npm run format && npm run lint && npm test && npm run pack",
-    "fast-all": "npm install && npm run build && npm run pack"
+    "all": "npm install && npm run format && npm run lint && npm test && npm run pack",
+    "fast-all": "npm install && npm run pack"
   },
   "keywords": [
     "github actions",
@@ -33,10 +33,6 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.4.1",
-    "@types/mock-fs": "^4.13.1",
-    "@types/node": "^22.0.2",
-    "@typescript-eslint/eslint-plugin": "^7.5",
-    "@typescript-eslint/parser": "^7.5",
     "@vercel/ncc": "^0.38.0",
     "eslint": "^8.33.0",
     "eslint-plugin-github": "^6.0.0",
@@ -44,8 +40,6 @@
     "jest": "^29.4.1",
     "mock-fs": "^5.2.0",
     "prettier": "^3.0.0",
-    "semver": "^7.3.8",
-    "ts-jest": "^29.0.5",
-    "typescript": "^5.0.3"
+    "semver": "^7.3.8"
   }
 }

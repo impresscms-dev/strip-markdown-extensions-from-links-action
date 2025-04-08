@@ -4,8 +4,11 @@ on:
   pull_request:
     branches:
       - main
-      
-permissions: write-all
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   test:
@@ -13,14 +16,10 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 16.x
-          - 18.x
-          - 19.x
+          - 20.x
     steps:
       - name: Checkouting code...
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -40,14 +39,12 @@ jobs:
 
     strategy:
       matrix:
-        node-version: 
-          - 16.x
+        node-version:
+          - 20.x
 
     steps:
       - name: Checkouting code...
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -56,9 +53,6 @@ jobs:
 
       - name: NPM install
         run: npm install
-
-      - name: NPM build
-        run: npm run build
 
       - name: NPM format
         run: npm run format
@@ -72,49 +66,14 @@ jobs:
       - name: Pack
         run: npm run pack
 
-      - name: Uploading build artifact...
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: dist/*.js
-
-  commit_and_push:
-
-    runs-on: ubuntu-latest
-    name: Commit and push build if needed
-    needs: build
-
-    steps:
-      - name: Checkouting code...
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - name: Downloading build artifact....
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: dist/
-          
-      - name: Auto commiting changes...
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Automatically builded and updated
-          file_pattern: dist/*.js
-          skip_fetch: true
-          skip_checkout: true
-
   dependabot:
-    needs: 
-      - build    
-      - commit_and_push
+    needs: build
     permissions:
       pull-requests: write
       contents: write
     runs-on: ubuntu-latest
-    # Checking the actor will prevent your Action run failing on non-Dependabot
-    # PRs but also ensures that it only does work for Dependabot PRs.
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    # Only run for Dependabot PRs
+    if: github.actor == 'dependabot[bot]'
     steps:
       # This first step will fail if there's no metadata and so the approval
       # will not occur.
@@ -136,4 +95,4 @@ jobs:
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

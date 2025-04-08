@@ -1,5 +1,12 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
-  preset: 'ts-jest',
+/**
+ * Jest configuration for testing JavaScript ES modules
+ *
+ * @type {import('jest').Config}
+ */
+export default {
   testEnvironment: 'node',
-};
+  transform: {},
+  moduleNameMapper: {
+    '^(\.{1,2}/.*)\.js$': '$1',
+  },
+}
