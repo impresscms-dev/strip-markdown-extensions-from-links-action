@@ -66,42 +66,8 @@ jobs:
       - name: Pack
         run: npm run pack
 
-      - name: Uploading build artifact...
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: dist/*.js
-
-  commit_and_push:
-
-    runs-on: ubuntu-latest
-    name: Commit and push build if needed
-    needs: build
-
-    steps:
-      - name: Checkouting code...
-        uses: actions/checkout@v4
-
-      - name: Downloading build artifact....
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: dist/
-
-      - name: List files in dist directory
-        run: ls -la dist/
-
-      - name: Auto commiting changes...
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'Automatically built and updated'
-          file_pattern: 'dist/*.*'
-          commit_options: '--no-verify'
-          push_options: '--force'
-
   dependabot:
-    needs:
-      - build
+    needs: build
     permissions:
       pull-requests: write
       contents: write
