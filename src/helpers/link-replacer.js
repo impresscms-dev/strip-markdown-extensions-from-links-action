@@ -25,6 +25,7 @@ class LinkReplacer {
   safeDecodeURIComponent(str) {
     try {
       return decodeURIComponent(str)
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       return str
     }
