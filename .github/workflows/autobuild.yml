@@ -2,8 +2,8 @@ name: Update dist folder
 
 on:
   push:
-    branches:
-      - main
+#    branches:
+#      - main
 
 concurrency:
   group: 'autobuild'
