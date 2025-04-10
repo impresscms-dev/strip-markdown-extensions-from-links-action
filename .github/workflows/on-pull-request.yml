@@ -54,9 +54,6 @@ jobs:
       - name: NPM install
         run: npm install
 
-      - name: NPM format
-        run: npm run format
-
       - name: NPM format check
         run: npm run format-check
 

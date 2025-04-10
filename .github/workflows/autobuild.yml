@@ -1,0 +1,86 @@
+name: Update dist folder
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: 'autobuild'
+  cancel-in-progress: true
+
+jobs:
+  update-dist:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run pack
+        run: npm run pack
+
+      - name: Check for changes in dist/
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: dist/**
+
+      - name: Set current date as integer
+        id: date
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+      - name: Set Branch Name
+        id: set-branch
+        run: echo "branch_name=autobuild-${{ steps.date.outputs.date }}" >> $GITHUB_OUTPUT
+
+      - name: Create new branch
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: peterjgrainger/action-create-branch@v2
+        with:
+          branch: ${{ steps.set-branch.outputs.branch_name }}
+
+      - name: Commit dist/ changes
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[autobuild] dist update"
+          branch: ${{ steps.set-branch.outputs.branch_name }}
+          file_pattern: dist/**
+
+      - name: Create Pull Request
+        if: steps.changed-files.outputs.any_changed == 'true'
+        id: create-pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.set-branch.outputs.branch_name }}
+          title: "[AUTOBUILD] ${{ steps.date.outputs.date }}"
+          body: "Auto-generated update to dist/ from latest main push"
+          base: main
+          labels: autobuild
+
+      - name: Sleep for 30 seconds
+        uses: juliangruber/sleep-action@v2.0.0
+        with:
+          time: 30s
+
+      - name: Auto-merge PR
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: pascalgn/automerge-action@v0.15.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGE_LABELS: autobuild
+          MERGE_METHOD: squash
+          MERGE_DELETE_BRANCH: "true"
+          MERGE_COMMIT_MESSAGE: pull-request-title
