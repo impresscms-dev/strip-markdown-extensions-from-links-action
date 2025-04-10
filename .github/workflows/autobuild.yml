@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,22 +28,21 @@ jobs:
       - name: Run pack
         run: npm run pack
 
-      - name: Check for changes in dist/
+      - name: Check changed files
         id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files: |
-            dist/*.js
-            dist/*.json
-
-      - name: List all changed files markdown files
-        if: steps.changed-files.outputs.any_changed == 'true'
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        shell: bash
         run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
-          done
+          CHANGED_FILES=$(git diff --name-only)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No uncommitted changes detected."
+            echo "any_changed=false" >> $GITHUB_OUTPUT
+            echo "all_changed_files=false" >> $GITHUB_OUTPUT
+          else
+            echo "Uncommitted changes detected: $CHANGED_FILES"
+            echo "any_changed=true" >> $GITHUB_OUTPUT
+            echo "all_changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set current date as integer
         if: steps.changed-files.outputs.any_changed == 'true'
