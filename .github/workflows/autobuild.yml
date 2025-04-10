@@ -46,7 +46,7 @@ jobs:
 
       - name: Create new branch
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: peterjgrainger/action-create-branch@v2
+        uses: peterjgrainger/action-create-branch@v3.0.0
         with:
           branch: ${{ steps.set-branch.outputs.branch_name }}
 
