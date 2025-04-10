@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -34,13 +34,26 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v44
         with:
-          files: dist/**
+          files: |
+            dist/*.js
+            dist/*.json
+
+      - name: List all changed files markdown files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
 
       - name: Set current date as integer
+        if: steps.changed-files.outputs.any_changed == 'true'
         id: date
         run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
 
       - name: Set Branch Name
+        if: steps.changed-files.outputs.any_changed == 'true'
         id: set-branch
         run: echo "branch_name=autobuild-${{ steps.date.outputs.date }}" >> $GITHUB_OUTPUT
 
@@ -71,6 +84,7 @@ jobs:
           labels: autobuild
 
       - name: Sleep for 30 seconds
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: juliangruber/sleep-action@v2.0.0
         with:
           time: 30s

@@ -13,7 +13,7 @@
     "format": "prettier --write **/*.js",
     "format-check": "prettier --check **/*.js",
     "lint": "eslint --no-warn-ignored **/*.js",
-    "pack": "ncc build --minify",
+    "pack": "ncc build -C --minify",
     "all": "npm install && npm run format && npm run lint && npm test && npm run pack",
     "fast-all": "npm install && npm run pack"
   },
