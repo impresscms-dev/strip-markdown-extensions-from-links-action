@@ -52,8 +52,6 @@ jobs:
           title: "[AUTOBUILD] ${{ steps.date.outputs.date }}"
           body: "Auto-generated update to dist/ from latest main push"
           base: main
-          labels: |
-            autobuild
           commit-message: "autobuild"
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           delete-branch: true
