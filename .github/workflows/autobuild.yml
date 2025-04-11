@@ -64,12 +64,20 @@ jobs:
         with:
           time: 30s
 
-      - name: Auto-merge PR
+      - name: Wait for all checks to complete
         if: ${{ steps.create_pr.outputs.pull-request-number }}
-        uses: pascalgn/automerge-action@v0.15.0
+        id: wait-for-checks
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ steps.create_pr.outputs.pull-request-head-sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 20
+          allowed-conclusions: success,skipped
+
+      - name: Auto-merge PR if checks pass
+        if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
+        run: |
+          gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MERGE_LABELS: autobuild
-          MERGE_METHOD: squash
-          MERGE_DELETE_BRANCH: "true"
-          MERGE_COMMIT_MESSAGE: pull-request-title
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
