@@ -77,9 +77,22 @@ jobs:
       - name: Add automerge label to PR
         if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
         run: |
+          echo "Checking if automerge label exists..."
+          if ! gh label list | grep -q "automerge"; then
+            echo "Creating automerge label..."
+            gh label create "automerge" --color "0E8A16" --description "Automatically merge this PR when checks pass"
+          fi
+
           echo "Adding automerge label to PR #${{ steps.create_pr.outputs.pull-request-number }}..."
           gh pr edit ${{ steps.create_pr.outputs.pull-request-number }} --add-label "automerge"
           echo "Label added successfully."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Approve PR
+        if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
+        run: |
+          gh pr review ${{ steps.create_pr.outputs.pull-request-number }} --approve -b "Automated approval for autobuild PR"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -94,5 +107,5 @@ jobs:
           MERGE_FORKS: "false"
           MERGE_RETRIES: "6"
           MERGE_RETRY_SLEEP: "10000"
-          MERGE_REQUIRED_APPROVALS: "0"
+          MERGE_REQUIRED_APPROVALS: "1"
 
