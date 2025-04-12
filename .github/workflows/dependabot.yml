@@ -1,0 +1,39 @@
+# Based on code from https://andre.arko.net/2022/05/15/automatic-dependabot-merges/
+
+name: "Merge updates"
+on:
+  workflow_run:
+    workflows:
+      - "Tests and Checks"
+    types:
+      - "completed"
+    branches:
+      - "dependabot/**"
+jobs:
+  merge:
+    name: "Merge"
+    runs-on: "ubuntu-latest"
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.actor == 'dependabot[bot]'
+    steps:
+      - name: "Approve pull request"
+        uses: "juliangruber/approve-pull-request-action@v2"
+        with:
+          github-token: "${{ secrets.IMPRESSBOT_TOKEN }}"
+          number: "${{ github.event.workflow_run.pull_requests[0].number }}"
+
+      - name: "Merge pull request"
+        uses: "actions/github-script@v6"
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            const pullRequest = context.payload.workflow_run.pull_requests[0]
+            const repository = context.repo
+            await github.rest.pulls.merge({
+              merge_method: "merge",
+              owner: repository.owner,
+              pull_number: pullRequest.number,
+              repo: repository.repo,
+            })
