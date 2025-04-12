@@ -11,15 +11,35 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
-  update-dist:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_OUTPUT
 
+  update:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - operation: format
+            name: Format code
+            description: "Format code according to project standards"
+          - operation: pack
+            name: Update dist folder
+            description: "Rebuild the distribution files"
+      max-parallel: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.IMPRESSBOT_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -29,83 +49,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run format
-        run: npm run format
+      - name: Run ${{ matrix.operation }}
+        run: npm run ${{ matrix.operation }}
 
-      - name: Run pack
-        run: npm run pack
-
-      - name: Set current date as integer
-        id: date
-        run: echo "date=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
-
-      - name: Set Branch Name
-        id: set-branch
-        run: echo "branch_name=autobuild-${{ steps.date.outputs.date }}" >> $GITHUB_OUTPUT
-
-      - name: Create Pull Request
-        id: create_pr
-        uses: peter-evans/create-pull-request@v7
+      - name: Commit and push if changes exist
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.set-branch.outputs.branch_name }}
-          title: "[AUTOBUILD] ${{ steps.date.outputs.date }}"
-          body: "Auto-generated update to dist/ from latest main push"
-          base: main
-          commit-message: "autobuild"
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          delete-branch: true
-          signoff: false
-          maintainer-can-modify: false
-
-      - name: Sleep for 30 seconds
-        if: ${{ steps.create_pr.outputs.pull-request-number }}
-        uses: juliangruber/sleep-action@v2.0.0
-        with:
-          time: 30s
-
-      - name: Wait for all checks to complete
-        if: ${{ steps.create_pr.outputs.pull-request-number }}
-        id: wait-for-checks
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ steps.create_pr.outputs.pull-request-head-sha }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 20
-          allowed-conclusions: success,skipped
-
-      - name: Add automerge label to PR
-        if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
-        run: |
-          echo "Checking if automerge label exists..."
-          if ! gh label list | grep -q "automerge"; then
-            echo "Creating automerge label..."
-            gh label create "automerge" --color "0E8A16" --description "Automatically merge this PR when checks pass"
-          fi
-
-          echo "Adding automerge label to PR #${{ steps.create_pr.outputs.pull-request-number }}..."
-          gh pr edit ${{ steps.create_pr.outputs.pull-request-number }} --add-label "automerge"
-          echo "Label added successfully."
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Approve PR
-        if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
-        run: |
-          gh pr review ${{ steps.create_pr.outputs.pull-request-number }} --approve -b "Automated approval for autobuild PR"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Merge PR with automerge label
-        if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
-        uses: pascalgn/automerge-action@v0.15.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MERGE_LABELS: "automerge"
-          MERGE_METHOD: "merge"
-          MERGE_COMMIT_MESSAGE: "Auto-merge PR #${{ steps.create_pr.outputs.pull-request-number }}"
-          MERGE_FORKS: "false"
-          MERGE_RETRIES: "6"
-          MERGE_RETRY_SLEEP: "10000"
-          MERGE_REQUIRED_APPROVALS: "1"
-
+          commit_message: "${{ matrix.name }} ${{ needs.setup.outputs.date }}"
+          commit_user_name: ImpressBot
+          commit_user_email: bot@impresscms.org
+          commit_author: ImpressBot <bot@impresscms.org>
+          token: ${{ secrets.IMPRESSBOT_TOKEN }}
