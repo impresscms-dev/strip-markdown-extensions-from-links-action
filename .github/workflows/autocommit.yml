@@ -1,4 +1,4 @@
-name: Update dist folder
+name: Autoupdate code
 
 on:
   push:
@@ -13,7 +13,8 @@ permissions:
   contents: write
 
 jobs:
-  setup:
+  prepare:
+    name: Prepare
     runs-on: ubuntu-latest
     outputs:
       date: ${{ steps.date.outputs.date }}
@@ -22,8 +23,9 @@ jobs:
         id: date
         run: echo "date=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_OUTPUT
 
-  update:
-    needs: setup
+  update-and-commit:
+    name: ${{ matrix.name }} and Commit
+    needs: prepare
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,7 +57,7 @@ jobs:
       - name: Commit and push if changes exist
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "${{ matrix.name }} ${{ needs.setup.outputs.date }}"
+          commit_message: "[AUTOBUILD] ${{ matrix.name }} ${{ needs.prepare.outputs.date }}"
           commit_user_name: ImpressBot
           commit_user_email: bot@impresscms.org
           commit_author: ImpressBot <bot@impresscms.org>
