@@ -74,15 +74,25 @@ jobs:
           wait-interval: 20
           allowed-conclusions: success,skipped
 
-      - name: Auto-merge PR if checks pass
+      - name: Add automerge label to PR
         if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
         run: |
-          echo "Attempting to merge PR #${{ steps.create_pr.outputs.pull-request-number }}..."
-          gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge
-          if [ $? -ne 0 ]; then
-            echo "Immediate merge failed, enabling auto-merge..."
-            gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto
-          fi
+          echo "Adding automerge label to PR #${{ steps.create_pr.outputs.pull-request-number }}..."
+          gh pr edit ${{ steps.create_pr.outputs.pull-request-number }} --add-label "automerge"
+          echo "Label added successfully."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge PR with automerge label
+        if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
+        uses: pascalgn/automerge-action@v0.15.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGE_LABELS: "automerge"
+          MERGE_METHOD: "merge"
+          MERGE_COMMIT_MESSAGE: "Auto-merge PR #${{ steps.create_pr.outputs.pull-request-number }}"
+          MERGE_FORKS: "false"
+          MERGE_RETRIES: "6"
+          MERGE_RETRY_SLEEP: "10000"
+          MERGE_REQUIRED_APPROVALS: "0"
 
