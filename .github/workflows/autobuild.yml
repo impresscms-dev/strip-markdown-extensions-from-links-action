@@ -37,7 +37,7 @@ jobs:
 
       - name: Set current date as integer
         id: date
-        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
 
       - name: Set Branch Name
         id: set-branch
@@ -77,7 +77,12 @@ jobs:
       - name: Auto-merge PR if checks pass
         if: ${{ steps.create_pr.outputs.pull-request-number && success() }}
         run: |
-          gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto
+          echo "Attempting to merge PR #${{ steps.create_pr.outputs.pull-request-number }}..."
+          gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge
+          if [ $? -ne 0 ]; then
+            echo "Immediate merge failed, enabling auto-merge..."
+            gh pr merge ${{ steps.create_pr.outputs.pull-request-number }} --merge --auto
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
