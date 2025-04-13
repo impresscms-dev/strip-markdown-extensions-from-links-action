@@ -17,15 +17,6 @@ class CacheManager {
   }
 
   /**
-   * Gets the cache map
-   *
-   * @returns {Map} The cache map
-   */
-  get cache() {
-    return this.#cache;
-  }
-
-  /**
    * Sets a value in the cache
    *
    * @param {string} key - The cache key
