@@ -1,6 +1,5 @@
-import {existsSync} from 'fs'
-import {extname} from 'path'
 import transformLinks from 'transform-markdown-links'
+import LinkInfoFactory from '../link-info/factory.js'
 
 /**
  * Class responsible for replacing Markdown file extensions in links
@@ -17,21 +16,6 @@ class LinkReplacer {
   }
 
   /**
-   * Safely decodes a URI component, returning the original string if decoding fails
-   *
-   * @param {string} str - The string to decode
-   * @returns {string} The decoded string or the original string if decoding fails
-   */
-  safeDecodeURIComponent(str) {
-    try {
-      return decodeURIComponent(str)
-      // eslint-disable-next-line no-unused-vars
-    } catch (e) {
-      return str
-    }
-  }
-
-  /**
    * Transforms all Markdown links in the content by removing .md extensions
    *
    * @param {string} oldContent - The original Markdown content
@@ -45,43 +29,32 @@ class LinkReplacer {
   }
 
   /**
-   * Extracts the file path and fragment (anchor) parts from a link
-   *
-   * @param {string} link - The link to extract parts from
-   * @returns {string[]} An array containing the file path and fragment
-   */
-  extractLinkParts(link) {
-    if (!link.includes('#')) {
-      return [link, ""]
-    }
-
-    return link.split("#", 2)
-  }
-
-  /**
    * Processes a single link, removing the .md extension if it's a valid Markdown file
    *
    * @param {string} link - The link to process
+   *
    * @returns {string} The processed link with .md extension removed if applicable
    */
   processLink(link) {
-    const [potentialEncodedFile, fragment] = this.extractLinkParts(link)
-    const potentialFile = this.safeDecodeURIComponent(potentialEncodedFile)
-    const fullPath = this.filesPath + '/' + potentialFile
+    const linkInfo = LinkInfoFactory.create(link, this.filesPath)
 
-    if (!existsSync(fullPath)) {
+    if (!linkInfo.isLocal || !linkInfo.exists || !linkInfo.isMarkdown) {
       return link
     }
 
-    if (extname(fullPath) !== '.md') {
-      return link
+    let newFileName = linkInfo.realFileName.startsWith(this.filesPath)
+      ? linkInfo.realFileName.substring(this.filesPath.length)
+      : linkInfo.realFileName
+
+    newFileName = newFileName.substring(0, newFileName.length - linkInfo.extension.length - 1)
+    if (linkInfo.query) {
+      newFileName += linkInfo.query
+    }
+    if (linkInfo.fragment) {
+      newFileName += linkInfo.fragment
     }
 
-    const uriPath = encodeURIComponent(potentialFile.substring(0, potentialFile.length - 3))
-    if(!fragment){
-      return uriPath
-    }
-    return uriPath + "#"+ encodeURIComponent(fragment)
+    return newFileName
   }
 }
 
