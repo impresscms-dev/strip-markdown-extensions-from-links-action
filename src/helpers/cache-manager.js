@@ -7,13 +7,13 @@ class CacheManager {
    * @type {Map}
    * @private
    */
-  #cache;
+  #cache
 
   /**
    * Creates a new CacheManager instance
    */
   constructor() {
-    this.#cache = new Map();
+    this.#cache = new Map()
   }
 
   /**
@@ -24,8 +24,8 @@ class CacheManager {
    * @returns {*} The stored value
    */
   set(key, value) {
-    this.#cache.set(key, value);
-    return value;
+    this.#cache.set(key, value)
+    return value
   }
 
   /**
@@ -35,7 +35,7 @@ class CacheManager {
    * @returns {*} The cached value or undefined if not found
    */
   get(key) {
-    return this.#cache.get(key);
+    return this.#cache.get(key)
   }
 
   /**
@@ -45,7 +45,7 @@ class CacheManager {
    * @returns {boolean} True if the key exists, false otherwise
    */
   has(key) {
-    return this.#cache.has(key);
+    return this.#cache.has(key)
   }
 
   /**
@@ -59,28 +59,28 @@ class CacheManager {
   remember(key, callback) {
     // Return cached value if available
     if (this.#cache.has(key)) {
-      return this.#cache.get(key);
+      return this.#cache.get(key)
     }
 
     // Compute the value
-    const result = callback();
+    const result = callback()
 
     // If the result is a Promise, handle it specially
     if (result instanceof Promise) {
       return result.then(resolvedValue => {
-        return this.set(key, resolvedValue);
-      });
+        return this.set(key, resolvedValue)
+      })
     }
 
     // Cache the result
-    return this.set(key, result);
+    return this.set(key, result)
   }
 
   /**
    * Clears the cache
    */
   clear() {
-    this.#cache.clear();
+    this.#cache.clear()
   }
 
   /**
@@ -90,8 +90,8 @@ class CacheManager {
    * @returns {boolean} True if the key was in the cache and has been removed, false otherwise
    */
   forget(key) {
-    return this.#cache.delete(key);
+    return this.#cache.delete(key)
   }
 }
 
-export default CacheManager;
+export default CacheManager

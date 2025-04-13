@@ -79,6 +79,8 @@ class LocalLinkInfo extends LinkInfoBase {
         if (fileType && fileType.mimeType) {
           return fileType.mimeType
         }
+
+        // eslint-disable-next-line no-unused-vars
       } catch (error) {
         return 'application/octet-stream'
       }
@@ -98,6 +100,8 @@ class LocalLinkInfo extends LinkInfoBase {
       try {
         const url = new URL(this.link, 'file://relative-url.localhost/')
         return url.search || null
+
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         return null
       }
@@ -114,6 +118,8 @@ class LocalLinkInfo extends LinkInfoBase {
       try {
         const url = new URL(this.link, 'file://relative-url.localhost/')
         return url.hash || null
+
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         return null
       }
@@ -140,6 +146,8 @@ class LocalLinkInfo extends LinkInfoBase {
     let url
     try {
       url = new URL(link, 'file://relative-url.localhost/')
+
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       return null
     }
@@ -187,6 +195,8 @@ class LocalLinkInfo extends LinkInfoBase {
         possibleFilename = this.#resolveRealFilenameFromLink(
           decodeURIComponent(this.link)
         )
+
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         possibleFilename = null
       }

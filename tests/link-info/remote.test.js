@@ -1,4 +1,4 @@
-import {describe, expect, test, jest} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import RemoteLinkInfo from '../../src/link-info/remote.js'
 
 describe('remote-link-info', () => {

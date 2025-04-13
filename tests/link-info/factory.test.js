@@ -30,7 +30,7 @@ describe('link-info-factory', () => {
     'mailto:user@example.com'
   ])('creates correct LinkInfo for URL: %s', (url) => {
     const info = LinkInfoFactory.create(url)
-    const isRemote = !!url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//);
+    const isRemote = !!url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//)
 
     if (isRemote) {
       expect(info).toBeInstanceOf(RemoteLinkInfo)

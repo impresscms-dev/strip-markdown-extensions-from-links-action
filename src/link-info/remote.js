@@ -52,6 +52,8 @@ class RemoteLinkInfo extends LinkInfoBase {
       try {
         const url = new URL(this.link)
         return url.search || null
+
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         return null
       }
@@ -68,6 +70,8 @@ class RemoteLinkInfo extends LinkInfoBase {
       try {
         const url = new URL(this.link)
         return url.hash || null
+
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         return null
       }

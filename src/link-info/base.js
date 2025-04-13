@@ -7,7 +7,6 @@ import CacheManager from '../helpers/cache-manager.js'
 import AbstractMethodError from '../errors/abstract-method-error.js'
 import AbstractClassError from '../errors/abstract-class-error.js'
 import {extname} from 'path'
-import {existsSync} from 'fs'
 
 /**
  * Abstract base class for link information
@@ -18,14 +17,14 @@ class LinkInfoBase {
    * @type {string}
    * @private
    */
-  #link;
+  #link
 
   /**
    * Private cache property
    * @type {CacheManager}
    * @private
    */
-  #cache;
+  #cache
 
   /**
    * Private base property

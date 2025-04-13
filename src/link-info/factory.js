@@ -15,7 +15,7 @@ class LinkInfoFactory {
    * @type {CacheManager}
    * @private
    */
-  #cache;
+  #cache
 
   /**
    * Creates a new LinkInfoFactory instance
