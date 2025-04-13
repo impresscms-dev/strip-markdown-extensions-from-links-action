@@ -9,7 +9,7 @@
     "url": "git@github.com:impresscms-dev/strip-markdown-extensions-from-links-action.git"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose",
     "format": "prettier --write **/*.js",
     "format-check": "prettier --check **/*.js",
     "lint": "eslint --no-warn-ignored **/*.js",
