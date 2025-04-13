@@ -54,7 +54,7 @@ describe('link-replacer', () => {
    */
   test('incorrect special characters (non existing file)', () => {
     const newContent = replacer.transformMarkdownLinks("[link](incorrect-%E0%A4%A-special-characters-included.md)")
-    expect(newContent).toBe("[link](incorrect-%E0%A4%A-special-characters-included.md)")
+    expect(newContent).toBe("[link](incorrect-%25E0%25A4%25A-special-characters-included)")
   })
 
   /**

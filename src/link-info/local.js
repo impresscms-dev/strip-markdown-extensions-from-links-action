@@ -3,7 +3,7 @@
  */
 
 import {existsSync, readFileSync} from 'fs'
-import {extname} from 'path'
+import {resolve} from 'path'
 import fileTypeChecker from 'file-type-checker'
 import mime from 'mime-types'
 import LinkInfoBase from './base.js'
@@ -33,6 +33,35 @@ class LocalLinkInfo extends LinkInfoBase {
   }
 
   /**
+   * Gets the file name without the extension
+   *
+   * @returns {string} The file name without the extension
+   */
+  get fileNameWithoutExtension() {
+    let newFileName = this.realFileName
+
+    if (this.base && this.realFileName.startsWith(this.base)) {
+      const realBase = resolve(this.base)
+      newFileName = resolve(this.realFileName).substring(realBase.length + 1)
+    }
+
+    if (this.extension) {
+      newFileName = newFileName.substring(0, newFileName.length - this.extension.length - 1)
+    }
+
+    newFileName = encodeURIComponent(newFileName)
+
+    if (this.query) {
+      newFileName += this.query
+    }
+    if (this.fragment) {
+      newFileName += this.fragment
+    }
+
+    return newFileName
+  }
+
+  /**
    * Gets the MIME type of the file
    *
    * @returns {string|null} The MIME type of the file, or null if it can't be determined
@@ -40,7 +69,7 @@ class LocalLinkInfo extends LinkInfoBase {
   get mimeType() {
     return this.cache.remember('mimeType', () => {
       if (!this.exists) {
-        return null
+        return mime.lookup(this.realFileName) || 'application/octet-stream'
       }
 
       try {
@@ -103,6 +132,11 @@ class LocalLinkInfo extends LinkInfoBase {
       return link
     }
 
+    let possibleFilename = this.#makePossibleFilename(link)
+    if (existsSync(possibleFilename)) {
+      return possibleFilename
+    }
+
     let url
     try {
       url = new URL(link, 'file://relative-url.localhost/')
@@ -110,7 +144,6 @@ class LocalLinkInfo extends LinkInfoBase {
       return null
     }
 
-    let possibleFilename
     if (url.hash) {
       possibleFilename = this.#makePossibleFilename(`${url.pathname}${url.search}`)
       if (existsSync(possibleFilename)) {
@@ -162,7 +195,7 @@ class LocalLinkInfo extends LinkInfoBase {
         return possibleFilename
       }
 
-      return this.#resolveRealFilenameFromLink(this.link) ?? this.link
+      return this.#resolveRealFilenameFromLink(this.link) ?? this.#makePossibleFilename(this.link)
     })
   }
 }

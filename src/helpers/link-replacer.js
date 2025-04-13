@@ -38,23 +38,11 @@ class LinkReplacer {
   processLink(link) {
     const linkInfo = LinkInfoFactory.create(link, this.filesPath)
 
-    if (!linkInfo.isLocal || !linkInfo.exists || !linkInfo.isMarkdown) {
+    if (!linkInfo.isLocal || !linkInfo.isMarkdown) {
       return link
     }
 
-    let newFileName = linkInfo.realFileName.startsWith(this.filesPath)
-      ? linkInfo.realFileName.substring(this.filesPath.length)
-      : linkInfo.realFileName
-
-    newFileName = newFileName.substring(0, newFileName.length - linkInfo.extension.length - 1)
-    if (linkInfo.query) {
-      newFileName += linkInfo.query
-    }
-    if (linkInfo.fragment) {
-      newFileName += linkInfo.fragment
-    }
-
-    return newFileName
+    return linkInfo.fileNameWithoutExtension
   }
 }
 

@@ -147,6 +147,15 @@ class LinkInfoBase {
   }
 
   /**
+   * Gets the file name without the extension
+   *
+   * @returns {string} The file name without the extension
+   */
+  get fileNameWithoutExtension() {
+    throw new AbstractMethodError('fileNameWithoutExtension')
+  }
+
+  /**
    * Gets the file extension from the link
    *
    * @returns {string|null} The file extension (without the dot), or null if it can't be determined
