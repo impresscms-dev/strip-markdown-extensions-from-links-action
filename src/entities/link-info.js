@@ -18,13 +18,50 @@ class LinkInfo {
   constructor(initialData = {}) {
     this.#data = new Map()
 
-    this.clear()
-
-    Object.entries(initialData).forEach(([key, value]) => {
-      if (this.#data.has(key)) {
-        this.#data.set(key, value)
-      }
-    })
+    this.#data.set(
+      'isLocal',
+      'isLocal' in initialData ? Boolean(initialData.isLocal) : false
+    )
+    this.#data.set(
+      'exists',
+      'exists' in initialData ? Boolean(initialData.exists) : false
+    )
+    this.#data.set(
+      'mimeType',
+      'mimeType' in initialData ? (initialData.mimeType !== null ? String(initialData.mimeType) : null) : null
+    )
+    this.#data.set(
+      'query',
+      'query' in initialData ? (initialData.query !== null ? String(initialData.query) : null) : null
+    )
+    this.#data.set(
+      'fragment',
+      'fragment' in initialData ? (initialData.fragment !== null ? String(initialData.fragment) : null) : null
+    )
+    this.#data.set(
+      'realFileName',
+      'realFileName' in initialData ? (initialData.realFileName !== null ? String(initialData.realFileName) : null) : null
+    )
+    this.#data.set(
+      'extension',
+      'extension' in initialData ? (initialData.extension !== null ? String(initialData.extension) : null) : null
+    )
+    this.#data.set(
+      'realUrl',
+      'realUrl' in initialData ? (initialData.realUrl !== null ? String(initialData.realUrl) : null) : null
+    )
+    this.#data.set(
+      'statusCode',
+      'statusCode' in initialData ? Number(initialData.statusCode) : 0
+    )
+    this.#data.set(
+      'error',
+      'error' in initialData ? (initialData.error !== null ? String(initialData.error) : null) : null
+    )
+    this.#data.set(
+      'fileNameWithoutExtension',
+      'fileNameWithoutExtension' in initialData ? (initialData.fileNameWithoutExtension !== null ? String(initialData.fileNameWithoutExtension) : null) : null
+    )
   }
 
   /**
@@ -126,25 +163,7 @@ class LinkInfo {
     return this.#data.get('fileNameWithoutExtension')
   }
 
-  /**
-   * Clears all data in the internal data map
-   * This method is intended for internal use only
-   *
-   * @private
-   */
-  clear() {
-    this.#data.set('isLocal', false)
-    this.#data.set('exists', false)
-    this.#data.set('mimeType', null)
-    this.#data.set('query', null)
-    this.#data.set('fragment', null)
-    this.#data.set('realFileName', null)
-    this.#data.set('extension', null)
-    this.#data.set('realUrl', null)
-    this.#data.set('statusCode', 0)
-    this.#data.set('error', null)
-    this.#data.set('fileNameWithoutExtension', null)
-  }
+
 
   /**
    * Checks if a link points to a markdown file based on MIME type
