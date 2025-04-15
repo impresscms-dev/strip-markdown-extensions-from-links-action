@@ -35,7 +35,6 @@ async function processFile(filename) {
 
 async function main() {
   try {
-    
     const files = readDirSync(filesPath)
 
     for (const file of files) {
