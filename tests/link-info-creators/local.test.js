@@ -8,7 +8,6 @@ import createLocalLinkInfo from '../../src/link-info-creators/local.js'
 import LinkInfo from '../../src/entities/link-info.js'
 import Filesystem from '../../src/helpers/filesystem.js'
 
-// Mock the Filesystem.detectMimeType method
 jest.spyOn(Filesystem, 'detectMimeType').mockImplementation((filename) => {
   if (filename.endsWith('.md')) {
     return 'text/markdown'
@@ -23,7 +22,7 @@ jest.spyOn(Filesystem, 'detectMimeType').mockImplementation((filename) => {
 
 describe('createLocalLinkInfo', () => {
   beforeEach(() => {
-    // Setup mock file system
+    
     mockFs({
       'test-files': {
         'markdown.md': 'This is a markdown file',
@@ -36,7 +35,7 @@ describe('createLocalLinkInfo', () => {
   })
 
   afterEach(() => {
-    // Restore the real file system after each test
+    
     mockFs.restore()
   })
 
@@ -46,7 +45,7 @@ describe('createLocalLinkInfo', () => {
     const linkInfo = await createLocalLinkInfo(link)
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
-    // Note: isLocal is not set by createLocalLinkInfo, it's set by LinkInfoFactory
+    
     expect(linkInfo.exists).toBe(true)
     expect(linkInfo.mimeType).toBe('text/markdown')
     expect(linkInfo.realFileName).toBe(link)
@@ -60,7 +59,7 @@ describe('createLocalLinkInfo', () => {
     const linkInfo = await createLocalLinkInfo(link)
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
-    // Note: isLocal is not set by createLocalLinkInfo, it's set by LinkInfoFactory
+    
     expect(linkInfo.exists).toBe(false)
     expect(linkInfo.realFileName).toBe(link)
   })
@@ -129,7 +128,6 @@ describe('createLocalLinkInfo', () => {
 
     const linkInfo = await createLocalLinkInfo(link)
 
-    // The fileNameWithoutExtension should be the link without the extension
     expect(linkInfo.fileNameWithoutExtension).toBe('test-files%2Fmarkdown')
   })
 
@@ -139,7 +137,6 @@ describe('createLocalLinkInfo', () => {
 
     const linkInfo = await createLocalLinkInfo(link, base)
 
-    // The fileNameWithoutExtension should be just the filename without the extension
     expect(linkInfo.fileNameWithoutExtension).toBe('markdown')
   })
 })

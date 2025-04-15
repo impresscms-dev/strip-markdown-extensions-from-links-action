@@ -9,12 +9,12 @@ describe('CacheManager', () => {
   let cacheManager
 
   beforeEach(() => {
-    // Create a fresh CacheManager instance before each test
+    
     cacheManager = new CacheManager()
   })
 
   test('should initialize with an empty cache', () => {
-    // Verify that a new cache has no entries
+    
     expect(cacheManager.has('any-key')).toBe(false)
   })
 
@@ -99,11 +99,9 @@ describe('CacheManager', () => {
     test('should return cached value without calling callback if key exists', () => {
       const key = 'cached-key'
       const value = 'cached-value'
-      
-      // First, set the value
+
       cacheManager.set(key, value)
-      
-      // Then try to remember it
+
       const callback = jest.fn()
       const result = cacheManager.remember(key, callback)
       
@@ -117,35 +115,29 @@ describe('CacheManager', () => {
       const callback = jest.fn().mockReturnValue(Promise.resolve(value))
       
       const resultPromise = cacheManager.remember(key, callback)
-      
-      // Verify it's a promise
+
       expect(resultPromise instanceof Promise).toBe(true)
-      
-      // Resolve the promise
+
       const result = await resultPromise
       
       expect(result).toBe(value)
       expect(callback).toHaveBeenCalledTimes(1)
-      
-      // Verify the value was cached
+
       expect(cacheManager.get(key)).toBe(value)
     })
   })
 
   describe('clear method', () => {
     test('should remove all entries from the cache', () => {
-      // Add some entries
+      
       cacheManager.set('key1', 'value1')
       cacheManager.set('key2', 'value2')
-      
-      // Verify they exist
+
       expect(cacheManager.has('key1')).toBe(true)
       expect(cacheManager.has('key2')).toBe(true)
-      
-      // Clear the cache
+
       cacheManager.clear()
-      
-      // Verify they no longer exist
+
       expect(cacheManager.has('key1')).toBe(false)
       expect(cacheManager.has('key2')).toBe(false)
     })
@@ -153,14 +145,12 @@ describe('CacheManager', () => {
 
   describe('forget method', () => {
     test('should remove a specific key from the cache', () => {
-      // Add some entries
+      
       cacheManager.set('key1', 'value1')
       cacheManager.set('key2', 'value2')
-      
-      // Remove one key
+
       const result = cacheManager.forget('key1')
-      
-      // Verify the result and cache state
+
       expect(result).toBe(true)
       expect(cacheManager.has('key1')).toBe(false)
       expect(cacheManager.has('key2')).toBe(true)

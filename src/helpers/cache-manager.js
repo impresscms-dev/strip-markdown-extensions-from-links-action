@@ -57,22 +57,18 @@ class CacheManager {
    * @returns {*} The cached or computed value
    */
   remember(key, callback) {
-    // Return cached value if available
     if (this.#cache.has(key)) {
       return this.#cache.get(key)
     }
 
-    // Compute the value
     const result = callback()
 
-    // If the result is a Promise, handle it specially
     if (result instanceof Promise) {
       return result.then(resolvedValue => {
         return this.set(key, resolvedValue)
       })
     }
 
-    // Cache the result
     return this.set(key, result)
   }
 

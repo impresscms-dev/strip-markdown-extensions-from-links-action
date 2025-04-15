@@ -163,8 +163,6 @@ class LinkInfo {
     return this.#data.get('fileNameWithoutExtension')
   }
 
-
-
   /**
    * Checks if a link points to a markdown file based on MIME type
    *

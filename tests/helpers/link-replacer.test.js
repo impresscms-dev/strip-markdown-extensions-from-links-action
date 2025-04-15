@@ -8,7 +8,6 @@ import LinkReplacer from '../../src/helpers/link-replacer.js'
 import LinkInfoFactory from '../../src/helpers/link-info-factory.js'
 import LinkInfo from '../../src/entities/link-info.js'
 
-// Mock the markdown-it module
 jest.mock('markdown-it', () => {
   return jest.fn().mockImplementation(() => {
     return {
@@ -21,19 +20,15 @@ jest.mock('markdown-it', () => {
   })
 })
 
-// We'll mock the LinkInfoFactory.create method in the beforeEach block
-
 describe('LinkReplacer', () => {
   let replacer
 
   beforeEach(() => {
-    // Create a fresh LinkReplacer instance before each test
+    
     replacer = new LinkReplacer('/test/path')
 
-    // Reset mock call counts
     jest.clearAllMocks()
 
-    // Setup mock file system
     mockFs({
       '/test/path': {
         'document.md': 'This is a markdown file',
@@ -42,9 +37,8 @@ describe('LinkReplacer', () => {
       }
     })
 
-    // Mock the LinkInfoFactory.create method
     jest.spyOn(LinkInfoFactory, 'create').mockImplementation(async (link, base) => {
-      // Create a mock LinkInfo based on the link
+      
       const isMarkdown = link.endsWith('.md')
       const isLocal = !link.includes('://')
 
@@ -58,14 +52,12 @@ describe('LinkReplacer', () => {
       })
     })
 
-    // We'll use the real processLink method for our tests
   })
 
   afterEach(() => {
-    // Restore the real file system after each test
+    
     mockFs.restore()
 
-    // Restore all mocks
     jest.restoreAllMocks()
   })
 

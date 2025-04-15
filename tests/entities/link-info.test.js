@@ -9,7 +9,6 @@ describe('LinkInfo', () => {
   let linkInfo
 
   beforeEach(() => {
-    // Create a fresh LinkInfo instance before each test
     linkInfo = new LinkInfo()
   })
 
@@ -66,7 +65,7 @@ describe('LinkInfo', () => {
     const customLinkInfo = new LinkInfo(initialData)
 
     expect(customLinkInfo.isLocal).toBe(true)
-    // The nonExistentProperty should not be accessible
+    
     expect(customLinkInfo['nonExistentProperty']).toBeUndefined()
   })
 
@@ -85,10 +84,8 @@ describe('LinkInfo', () => {
       fileNameWithoutExtension: 'example'
     }
 
-    // First create with initial data
     linkInfo = new LinkInfo(initialData)
 
-    // Then create a new instance without data to test the default values
     linkInfo = new LinkInfo()
 
     expect(linkInfo.isLocal).toBe(false)

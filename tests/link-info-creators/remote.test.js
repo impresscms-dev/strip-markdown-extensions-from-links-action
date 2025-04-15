@@ -6,30 +6,28 @@ import { describe, test, expect, jest, beforeEach } from '@jest/globals'
 import createRemoteLinkInfo from '../../src/link-info-creators/remote.js'
 import LinkInfo from '../../src/entities/link-info.js'
 
-// Mock the global fetch function
 global.fetch = jest.fn()
 global.AbortController = jest.fn().mockImplementation(() => ({
   signal: 'mock-signal',
   abort: jest.fn()
 }))
 
-// Mock setTimeout and clearTimeout
 jest.spyOn(global, 'setTimeout').mockImplementation((callback, timeout) => {
   return 'mock-timeout-id'
 })
 
 jest.spyOn(global, 'clearTimeout').mockImplementation((timeoutId) => {
-  // Do nothing
+  
 })
 
 describe('createRemoteLinkInfo', () => {
   beforeEach(() => {
-    // Reset all mocks before each test
+    
     jest.clearAllMocks()
   })
 
   test('should create a LinkInfo instance for a successful HTTP request', async () => {
-    // Mock a successful response
+    
     global.fetch.mockResolvedValueOnce({
       status: 200,
       headers: new Map([
@@ -53,7 +51,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should create a LinkInfo instance for a failed HTTP request', async () => {
-    // Mock a failed response
+    
     global.fetch.mockRejectedValueOnce(new Error('Network error'))
     
     const link = 'https://example.com/page.html'
@@ -70,7 +68,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should create a LinkInfo instance for a non-200 HTTP response', async () => {
-    // Mock a 404 response
+    
     global.fetch.mockResolvedValueOnce({
       status: 404,
       headers: new Map([
@@ -92,7 +90,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should extract filename from content-disposition header', async () => {
-    // Mock a response with content-disposition header
+    
     global.fetch.mockResolvedValueOnce({
       status: 200,
       headers: new Map([
@@ -109,7 +107,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should extract filename from URL if no content-disposition header', async () => {
-    // Mock a response without content-disposition header
+    
     global.fetch.mockResolvedValueOnce({
       status: 200,
       headers: new Map([
@@ -125,7 +123,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should handle timeouts correctly', async () => {
-    // Mock a timeout by rejecting with an AbortError
+    
     global.fetch.mockRejectedValueOnce(new DOMException('The operation was aborted', 'AbortError'))
     
     const link = 'https://example.com/slow-page.html'
@@ -138,7 +136,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should handle unexpected errors during fetch', async () => {
-    // Mock an unexpected error during fetch setup
+    
     global.fetch = jest.fn().mockImplementationOnce(() => {
       throw new Error('Unexpected error')
     })

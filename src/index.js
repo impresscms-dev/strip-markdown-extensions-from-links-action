@@ -12,10 +12,8 @@ import {readFileSync, writeFileSync} from 'fs'
 import {debug, getInput} from '@actions/core'
 import LinkReplacer from './helpers/link-replacer.js'
 
-// Get the path to the directory containing Markdown files from the action inputs
 const filesPath = getInput('path', {required: true})
 
-// Create a new LinkReplacer instance with the specified path
 const replacer = new LinkReplacer(filesPath)
 
 /**
@@ -24,27 +22,24 @@ const replacer = new LinkReplacer(filesPath)
  * @param {string} filename - The path to the file to process
  */
 async function processFile(filename) {
-  // Read the file content
+  
   const oldContent = readFileSync(filename, 'utf8')
-  // Transform Markdown links in the content
+  
   const newContent = await replacer.transformMarkdownLinks(oldContent)
 
-  // Only write the file if the content has changed
   if (oldContent !== newContent) {
     debug(filename + ' updated')
     writeFileSync(filename, newContent)
   }
 }
 
-// Main execution function
 async function main() {
   try {
-    // Get all files in the directory recursively
+    
     const files = readDirSync(filesPath)
 
-    // Process each file
     for (const file of files) {
-      // Convert the file path to a string
+      
       const filename = file.toString()
       await processFile(filename)
     }
@@ -54,5 +49,4 @@ async function main() {
   }
 }
 
-// Run the main function
 await main()

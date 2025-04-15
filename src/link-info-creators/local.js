@@ -72,7 +72,6 @@ function makePossibleFilename(path, base) {
  */
 export default async function createLocalLinkInfo(link, base = null) {
 
-  // Get the real file name
   const getRealFileName = () => {
     let possibleFilename
 
@@ -96,16 +95,12 @@ export default async function createLocalLinkInfo(link, base = null) {
 
   const realFileName = getRealFileName()
 
-  // Check if the file exists
   const exists = existsSync(realFileName)
 
-  // Get the file extension
   const extension = extname(realFileName).substring(1) || null
 
-  // Get the MIME type
   const mimeType = Filesystem.detectMimeType(realFileName)
 
-  // Get the query string and fragment
   let query = null
   let fragment = null
   try {
@@ -118,7 +113,6 @@ export default async function createLocalLinkInfo(link, base = null) {
 
   }
 
-  // Get the file name without extension
   let fileNameWithoutExtension = realFileName
 
   if (base && realFileName.startsWith(base)) {

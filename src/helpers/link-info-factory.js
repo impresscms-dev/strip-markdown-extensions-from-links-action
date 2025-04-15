@@ -21,7 +21,6 @@ class LinkInfoFactory {
    * Creates a new LinkInfoFactory instance
    */
   constructor() {
-    // Create a cache manager for this instance
     this.#cache = new CacheManager()
   }
 
