@@ -58,6 +58,6 @@ class LinkInfoFactory {
   }
 }
 
-const factory = new LinkInfoFactory()
+const linkInfoFactory = new LinkInfoFactory()
 
-export default factory
+export default linkInfoFactory

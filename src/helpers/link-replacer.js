@@ -1,5 +1,5 @@
 import transformLinks from 'transform-markdown-links'
-import LinkInfoFactory from '../link-info/factory.js'
+import LinkInfoFactory from '../link-info-creators/link-info-factory.js'
 
 /**
  * Class responsible for replacing Markdown file extensions in links
