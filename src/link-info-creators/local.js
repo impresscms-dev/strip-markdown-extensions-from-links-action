@@ -134,6 +134,7 @@ export default async function createLocalLinkInfo(link, base = null) {
   }
 
   return new LinkInfo({
+    isLocal: true,
     exists,
     mimeType,
     query,

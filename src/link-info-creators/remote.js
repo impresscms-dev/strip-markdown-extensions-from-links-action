@@ -12,7 +12,9 @@ import LinkInfo from '../entities/link-info.js'
  * @returns {Promise<LinkInfo>} A Promise that resolves to a LinkInfoEntity
  */
 async function createRemoteLinkInfo(link, _base = null) {
-  const data = {}
+  const data = {
+    isLocal: false,
+  }
 
   try {
     const controller = new AbortController()

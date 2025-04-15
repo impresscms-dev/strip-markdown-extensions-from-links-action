@@ -51,6 +51,7 @@ describe('createLocalLinkInfo', () => {
     expect(linkInfo.realFileName).toBe(link)
     expect(linkInfo.extension).toBe('md')
     expect(linkInfo.isMarkdown).toBe(true)
+    expect(linkInfo.isLocal).toBe(true)
   })
 
   test('should create a LinkInfo instance for a non-existent file', async () => {
