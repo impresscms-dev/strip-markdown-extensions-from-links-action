@@ -22,11 +22,15 @@ jest.spyOn(Filesystem, 'detectMimeType').mockImplementation((filename) => {
 
 describe('createLocalLinkInfo', () => {
   beforeEach(() => {
-    
+
     mockFs({
       'test-files': {
         'markdown.md': 'This is a markdown file',
         'text.txt': 'This is a text file',
+        'regular.md': 'This is a regular markdown file',
+        'with-query.md?a=b': 'This is a markdown file with query params',
+        'with-anchor.md#section': 'This is a markdown file with anchor',
+        'with-both.md?a=b#section': 'This is a markdown file with query params and anchor',
         'nested': {
           'nested-markdown.md': 'This is a nested markdown file'
         }
@@ -35,7 +39,6 @@ describe('createLocalLinkInfo', () => {
   })
 
   afterEach(() => {
-    
     mockFs.restore()
   })
 
@@ -45,7 +48,7 @@ describe('createLocalLinkInfo', () => {
     const linkInfo = await createLocalLinkInfo(link)
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
-    
+
     expect(linkInfo.exists).toBe(true)
     expect(linkInfo.mimeType).toBe('text/markdown')
     expect(linkInfo.realFileName).toBe(link)
@@ -60,7 +63,7 @@ describe('createLocalLinkInfo', () => {
     const linkInfo = await createLocalLinkInfo(link)
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
-    
+
     expect(linkInfo.exists).toBe(false)
     expect(linkInfo.realFileName).toBe(link)
   })
@@ -139,5 +142,42 @@ describe('createLocalLinkInfo', () => {
     const linkInfo = await createLocalLinkInfo(link, base)
 
     expect(linkInfo.fileNameWithoutExtension).toBe('markdown')
+  })
+
+  test('should handle files with query parameters that exist on filesystem', async () => {
+    const link = 'test-files/with-query.md?a=b'
+
+    const linkInfo = await createLocalLinkInfo(link)
+
+    expect(linkInfo).toBeInstanceOf(LinkInfo)
+    expect(linkInfo.exists).toBe(true)
+    expect(linkInfo.query).toBe('?a=b')
+    expect(linkInfo.isLocal).toBe(true)
+    // Note: MIME type detection doesn't work reliably for files with special characters in names
+  })
+
+  test('should handle files with anchors that exist on filesystem', async () => {
+    const link = 'test-files/with-anchor.md#section'
+
+    const linkInfo = await createLocalLinkInfo(link)
+
+    expect(linkInfo).toBeInstanceOf(LinkInfo)
+    expect(linkInfo.exists).toBe(true)
+    expect(linkInfo.fragment).toBe('#section')
+    expect(linkInfo.isLocal).toBe(true)
+    // Note: MIME type detection doesn't work reliably for files with special characters in names
+  })
+
+  test('should handle files with both query parameters and anchors that exist on filesystem', async () => {
+    const link = 'test-files/with-both.md?a=b#section'
+
+    const linkInfo = await createLocalLinkInfo(link)
+
+    expect(linkInfo).toBeInstanceOf(LinkInfo)
+    expect(linkInfo.exists).toBe(true)
+    expect(linkInfo.query).toBe('?a=b')
+    expect(linkInfo.fragment).toBe('#section')
+    expect(linkInfo.isLocal).toBe(true)
+    // Note: MIME type detection doesn't work reliably for files with special characters in names
   })
 })
