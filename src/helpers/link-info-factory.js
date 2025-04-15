@@ -3,8 +3,8 @@
  */
 
 import CacheManager from '../helpers/cache-manager.js'
-import createLocalLinkInfo from './local.js'
-import createRemoteLinkInfo from './remote.js'
+import createLocalLinkInfo from '../link-info-creators/local.js'
+import createRemoteLinkInfo from '../link-info-creators/remote.js'
 
 /**
  * Factory class for creating LinkInfo instances
@@ -43,7 +43,9 @@ class LinkInfoFactory {
    * @returns {import('./base.js').default} A LocalLinkInfo or RemoteLinkInfo instance
    */
   async create(link, base = null) {
-    return this.cache.remember(link, () => {
+      if (this.#cache.has(link)) {
+        return link
+      }
 
       if (base && link.startsWith(base)) {
         link = link.substring(base.length)
@@ -51,10 +53,13 @@ class LinkInfoFactory {
 
       const isLocal = !link.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//)
 
-      return isLocal
-        ? createLocalLinkInfo(link, base)
-        : createRemoteLinkInfo(link, base)
-    })
+      const LinkInfoInstance = isLocal
+        ? await createLocalLinkInfo(link, base)
+        : await createRemoteLinkInfo(link, base)
+
+      this.#cache.set(link, LinkInfoInstance)
+
+      return LinkInfoInstance
   }
 }
 

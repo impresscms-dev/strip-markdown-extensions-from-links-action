@@ -23,11 +23,11 @@ const replacer = new LinkReplacer(filesPath)
  *
  * @param {string} filename - The path to the file to process
  */
-function processFile(filename) {
+async function processFile(filename) {
   // Read the file content
   const oldContent = readFileSync(filename, 'utf8')
   // Transform Markdown links in the content
-  const newContent = replacer.transformMarkdownLinks(oldContent)
+  const newContent = await replacer.transformMarkdownLinks(oldContent)
 
   // Only write the file if the content has changed
   if (oldContent !== newContent) {
@@ -37,7 +37,7 @@ function processFile(filename) {
 }
 
 // Main execution function
-function main() {
+async function main() {
   try {
     // Get all files in the directory recursively
     const files = readDirSync(filesPath)
@@ -46,7 +46,7 @@ function main() {
     for (const file of files) {
       // Convert the file path to a string
       const filename = file.toString()
-      processFile(filename)
+      await processFile(filename)
     }
   } catch (error) {
     console.error('Error processing files:', error)
@@ -55,4 +55,4 @@ function main() {
 }
 
 // Run the main function
-main()
+await main()
