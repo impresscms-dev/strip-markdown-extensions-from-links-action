@@ -2,14 +2,14 @@
  * Functions for getting information about remote links
  */
 
-import LinkInfoEntity from '../entities/link-info-entity.js'
+import LinkInfo from '../entities/link-info.js'
 
 /**
  * Creates a LinkInfoEntity for a remote link
  *
  * @param {string} link - The link to analyze
  * @param {string|null} base - The base path (ignored for remote links)
- * @returns {Promise<LinkInfoEntity>} A Promise that resolves to a LinkInfoEntity
+ * @returns {Promise<LinkInfo>} A Promise that resolves to a LinkInfoEntity
  */
 async function createRemoteLinkInfo(link, base = null) {
   const data = {}
@@ -69,7 +69,7 @@ async function createRemoteLinkInfo(link, base = null) {
   data.exists = data.statusCode >= 200 && data.statusCode < 300 && !data.error
   data.filenameWithoutExtension = link
 
-  return new LinkInfoEntity(data)
+  return new LinkInfo(data)
 }
 
 export default createRemoteLinkInfo

@@ -2,7 +2,7 @@
  * Entity class for storing link information
  * Provides read-only access to all cache keys
  */
-class LinkInfoEntity {
+class LinkInfo {
   /**
    * Private data map
    * @type {Map<string, any>}
@@ -156,4 +156,4 @@ class LinkInfoEntity {
   }
 }
 
-export default LinkInfoEntity
+export default LinkInfo

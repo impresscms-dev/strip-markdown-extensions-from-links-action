@@ -4,7 +4,7 @@
 
 import {existsSync} from 'fs'
 import {resolve, extname} from 'path'
-import LinkInfoEntity from '../entities/link-info-entity.js'
+import LinkInfo from '../entities/link-info.js'
 import Filesystem from '../helpers/filesystem.js'
 
 /**
@@ -68,7 +68,7 @@ function makePossibleFilename(path, base) {
  *
  * @param {string} link - The link or path to analyze
  * @param {string|null} base - The base path
- * @returns {Promise<LinkInfoEntity>} A Promise that resolves to a LinkInfoEntity
+ * @returns {Promise<LinkInfo>} A Promise that resolves to a LinkInfoEntity
  */
 export default async function createLocalLinkInfo(link, base = null) {
 
@@ -139,7 +139,7 @@ export default async function createLocalLinkInfo(link, base = null) {
     fileNameWithoutExtension += fragment
   }
 
-  return new LinkInfoEntity({
+  return new LinkInfo({
     exists,
     mimeType,
     query,
