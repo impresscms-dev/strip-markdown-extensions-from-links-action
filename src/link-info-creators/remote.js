@@ -8,10 +8,10 @@ import LinkInfo from '../entities/link-info.js'
  * Creates a LinkInfoEntity for a remote link
  *
  * @param {string} link - The link to analyze
- * @param {string|null} base - The base path (ignored for remote links)
+ * @param {string|null} _base - The base path (ignored for remote links)
  * @returns {Promise<LinkInfo>} A Promise that resolves to a LinkInfoEntity
  */
-async function createRemoteLinkInfo(link, base = null) {
+async function createRemoteLinkInfo(link, _base = null) {
   const data = {}
 
   try {

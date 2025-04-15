@@ -5,7 +5,6 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals'
 import mockFs from 'mock-fs'
 import Filesystem from '../../src/helpers/filesystem.js'
-import fs from 'fs'
 import mime from 'mime-types'
 
 import fileTypeChecker from 'file-type-checker'
@@ -14,27 +13,27 @@ jest.spyOn(fileTypeChecker, 'detectFile')
 
 describe('Filesystem', () => {
   beforeEach(() => {
-    
+
     jest.clearAllMocks()
 
     mockFs({
       'test-files': {
         'markdown.md': 'This is a markdown file',
         'text.txt': 'This is a text file',
-        'image.png': Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), 
+        'image.png': Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
         'unknown.xyz': 'Unknown file type'
       }
     })
   })
 
   afterEach(() => {
-    
+
     mockFs.restore()
   })
 
   describe('detectMimeType', () => {
     test('should use file-type-checker to detect MIME type when available', () => {
-      
+
       fileTypeChecker.detectFile.mockImplementation(() => ({ mimeType: 'image/png' }))
 
       const mimeType = Filesystem.detectMimeType('test-files/image.png')
@@ -44,7 +43,7 @@ describe('Filesystem', () => {
     })
 
     test('should fall back to mime-types lookup when file-type-checker returns no result', () => {
-      
+
       fileTypeChecker.detectFile.mockImplementation(() => null)
 
       const mimeLookupSpy = jest.spyOn(mime, 'lookup')
@@ -60,7 +59,7 @@ describe('Filesystem', () => {
     })
 
     test('should fall back to mime-types lookup when file-type-checker returns object without mimeType', () => {
-      
+
       fileTypeChecker.detectFile.mockImplementation(() => ({ someOtherProperty: 'value' }))
 
       const mimeLookupSpy = jest.spyOn(mime, 'lookup')
@@ -76,7 +75,7 @@ describe('Filesystem', () => {
     })
 
     test('should return application/octet-stream when mime-types lookup returns false', () => {
-      
+
       fileTypeChecker.detectFile.mockImplementation(() => null)
 
       const mimeLookupSpy = jest.spyOn(mime, 'lookup')
@@ -92,7 +91,7 @@ describe('Filesystem', () => {
     })
 
     test('should handle file read errors gracefully', () => {
-      
+
       mockFs({})
 
       const mimeLookupSpy = jest.spyOn(mime, 'lookup')

@@ -12,7 +12,7 @@ describe('LinkReplacer', () => {
   let replacer
 
   beforeEach(() => {
-    
+
     replacer = new LinkReplacer('/test/path')
 
     jest.clearAllMocks()
@@ -25,8 +25,8 @@ describe('LinkReplacer', () => {
       }
     })
 
-    jest.spyOn(LinkInfoFactory, 'create').mockImplementation(async (link, base) => {
-      
+    jest.spyOn(LinkInfoFactory, 'create').mockImplementation(async (link, _base) => {
+
       const isMarkdown = link.endsWith('.md')
       const isLocal = !link.includes('://')
 
@@ -43,7 +43,7 @@ describe('LinkReplacer', () => {
   })
 
   afterEach(() => {
-    
+
     mockFs.restore()
 
     jest.restoreAllMocks()

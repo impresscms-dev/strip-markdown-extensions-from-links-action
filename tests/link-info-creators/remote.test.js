@@ -12,22 +12,22 @@ global.AbortController = jest.fn().mockImplementation(() => ({
   abort: jest.fn()
 }))
 
-jest.spyOn(global, 'setTimeout').mockImplementation((callback, timeout) => {
+jest.spyOn(global, 'setTimeout').mockImplementation((_callback, _timeout) => {
   return 'mock-timeout-id'
 })
 
-jest.spyOn(global, 'clearTimeout').mockImplementation((timeoutId) => {
-  
+jest.spyOn(global, 'clearTimeout').mockImplementation((_timeoutId) => {
+  // Mock implementation
 })
 
 describe('createRemoteLinkInfo', () => {
   beforeEach(() => {
-    
+
     jest.clearAllMocks()
   })
 
   test('should create a LinkInfo instance for a successful HTTP request', async () => {
-    
+
     global.fetch.mockResolvedValueOnce({
       status: 200,
       headers: new Map([
@@ -35,11 +35,11 @@ describe('createRemoteLinkInfo', () => {
         ['content-disposition', 'attachment; filename="example.html"']
       ])
     })
-    
+
     const link = 'https://example.com/page.html'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo).toBeInstanceOf(LinkInfo)
     expect(linkInfo.isLocal).toBe(false)
     expect(linkInfo.exists).toBe(true)
@@ -51,13 +51,13 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should create a LinkInfo instance for a failed HTTP request', async () => {
-    
+
     global.fetch.mockRejectedValueOnce(new Error('Network error'))
-    
+
     const link = 'https://example.com/page.html'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo).toBeInstanceOf(LinkInfo)
     expect(linkInfo.isLocal).toBe(false)
     expect(linkInfo.exists).toBe(false)
@@ -68,18 +68,18 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should create a LinkInfo instance for a non-200 HTTP response', async () => {
-    
+
     global.fetch.mockResolvedValueOnce({
       status: 404,
       headers: new Map([
         ['content-type', 'text/html']
       ])
     })
-    
+
     const link = 'https://example.com/page.html'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo).toBeInstanceOf(LinkInfo)
     expect(linkInfo.isLocal).toBe(false)
     expect(linkInfo.exists).toBe(false)
@@ -90,7 +90,7 @@ describe('createRemoteLinkInfo', () => {
   })
 
   test('should extract filename from content-disposition header', async () => {
-    
+
     global.fetch.mockResolvedValueOnce({
       status: 200,
       headers: new Map([
@@ -98,53 +98,53 @@ describe('createRemoteLinkInfo', () => {
         ['content-disposition', 'attachment; filename="document.md"']
       ])
     })
-    
+
     const link = 'https://example.com/download'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo.realFileName).toBe('document.md')
   })
 
   test('should extract filename from URL if no content-disposition header', async () => {
-    
+
     global.fetch.mockResolvedValueOnce({
       status: 200,
       headers: new Map([
         ['content-type', 'text/markdown']
       ])
     })
-    
+
     const link = 'https://example.com/document.md'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo.realFileName).toBe('document.md')
   })
 
   test('should handle timeouts correctly', async () => {
-    
+
     global.fetch.mockRejectedValueOnce(new DOMException('The operation was aborted', 'AbortError'))
-    
+
     const link = 'https://example.com/slow-page.html'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo.exists).toBe(false)
     expect(linkInfo.error).toBe('The operation was aborted')
     expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 5000)
   })
 
   test('should handle unexpected errors during fetch', async () => {
-    
+
     global.fetch = jest.fn().mockImplementationOnce(() => {
       throw new Error('Unexpected error')
     })
-    
+
     const link = 'https://example.com/page.html'
-    
+
     const linkInfo = await createRemoteLinkInfo(link)
-    
+
     expect(linkInfo.exists).toBe(false)
     expect(linkInfo.error).toBe('Unexpected error')
   })

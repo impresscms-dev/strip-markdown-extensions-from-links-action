@@ -2,7 +2,7 @@
  * Tests for the LinkInfoFactory class
  */
 
-import { describe, test, expect, jest } from '@jest/globals'
+import { describe, test, expect } from '@jest/globals'
 import LinkInfoFactory from '../../src/helpers/link-info-factory.js'
 import CacheManager from '../../src/helpers/cache-manager.js'
 
