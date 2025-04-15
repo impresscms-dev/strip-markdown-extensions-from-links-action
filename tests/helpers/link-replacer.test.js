@@ -8,18 +8,6 @@ import LinkReplacer from '../../src/helpers/link-replacer.js'
 import LinkInfoFactory from '../../src/helpers/link-info-factory.js'
 import LinkInfo from '../../src/entities/link-info.js'
 
-jest.mock('markdown-it', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      render: jest.fn().mockReturnValue(''),
-      parse: jest.fn().mockReturnValue([]),
-      renderer: {
-        rules: {}
-      }
-    }
-  })
-})
-
 describe('LinkReplacer', () => {
   let replacer
 

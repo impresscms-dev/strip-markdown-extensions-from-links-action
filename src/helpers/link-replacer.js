@@ -1,4 +1,8 @@
-import MarkdownIt from 'markdown-it/dist/markdown-it.js'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkStringify from 'remark-stringify'
+import remarkGfm from 'remark-gfm'
+import { visit } from 'unist-util-visit'
 import LinkInfoFactory from './link-info-factory.js'
 
 /**
@@ -22,68 +26,55 @@ class LinkReplacer {
    * @returns {Promise<string>} The transformed Markdown content with processed links
    */
   async transformMarkdownLinks(oldContent) {
-    
-    const md = new MarkdownIt()
-
-    const defaultLinkOpenRenderer = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
-      return self.renderToken(tokens, idx, options)
-    }
-
+    // Store original links and their processed versions
     const linkMap = new Map()
 
-    md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
-      const token = tokens[idx]
-      const hrefIndex = token.attrIndex('href')
-
-      if (hrefIndex >= 0) {
-        const href = token.attrs[hrefIndex][1]
-
-        const placeholder = `__LINK_PLACEHOLDER_${idx}__`
-        linkMap.set(placeholder, href)
-
-        token.attrs[hrefIndex][1] = placeholder
-      }
-
-      return defaultLinkOpenRenderer(tokens, idx, options, env, self)
-    }
-
-    const html = md.render(oldContent)
-
-    const mdParser = new MarkdownIt()
-
-    const tokens = mdParser.parse(html, {})
-
-    const linkPromises = []
-    for (const [placeholder, originalHref] of linkMap.entries()) {
-      linkPromises.push(
-        this.processLink(originalHref).then(processedHref => {
-          return { placeholder, processedHref }
+    // Configure remark with custom settings to preserve the original formatting
+    const processor = unified()
+      .use(remarkParse)  // Parse markdown to AST
+      .use(remarkGfm)    // Support GFM (GitHub Flavored Markdown)
+      .use(() => async (tree) => {
+        // Find all link nodes in the AST
+        const linkNodes = []
+        visit(tree, 'link', (node) => {
+          linkNodes.push(node)
         })
-      )
-    }
 
-    const processedLinks = await Promise.all(linkPromises)
+        // Process all links in parallel
+        const linkPromises = linkNodes.map(async (node) => {
+          const originalHref = node.url
+          const processedHref = await this.processLink(originalHref)
 
-    const processedLinkMap = new Map()
-    for (const { placeholder, processedHref } of processedLinks) {
-      processedLinkMap.set(placeholder, processedHref)
-    }
+          // Store the original and processed links for later reference
+          if (originalHref !== processedHref) {
+            linkMap.set(originalHref, processedHref)
+          }
 
-    let processedHtml = html
-    for (const [placeholder, processedHref] of processedLinkMap.entries()) {
-      processedHtml = processedHtml.replace(new RegExp(placeholder, 'g'), processedHref)
-    }
+          // Update the node's URL in the AST
+          node.url = processedHref
+        })
 
-    let result = oldContent
-    for (const [placeholder, originalHref] of linkMap.entries()) {
-      const processedHref = processedLinkMap.get(placeholder)
+        // Wait for all link processing to complete
+        await Promise.all(linkPromises)
+      })
+      .use(remarkStringify, {
+        // Configure stringify to match the original format
+        bullet: '*',
+        emphasis: '_',
+        fences: true,
+        listItemIndent: 'one',
+        rule: '-',
+        ruleSpaces: false,
+        strong: '*'
+      })
 
-      if (originalHref !== processedHref) {
+    // Process the markdown content
+    const file = await processor.process(oldContent)
 
-        const escapedHref = originalHref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        const linkRegex = new RegExp(`\\[([^\\]]+)\\]\\(${escapedHref}\\)`, 'g')
-        result = result.replace(linkRegex, (match, text) => `[${text}](${processedHref})`)
-      }
+    // Get the result as a string and remove any trailing newline that remark might add
+    let result = String(file)
+    if (result.endsWith('\n') && !oldContent.endsWith('\n')) {
+      result = result.slice(0, -1)
     }
 
     return result

@@ -30,9 +30,14 @@
     "@actions/github": "^6.0.0",
     "file-type": "^20.4.1",
     "file-type-checker": "^1.1.4",
-    "markdown-it": "^14.1.0",
     "mime-types": "^3.0.1",
-    "recursive-readdir-sync": "^1.0.6"
+    "recursive-readdir-sync": "^1.0.6",
+    "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.4.1",

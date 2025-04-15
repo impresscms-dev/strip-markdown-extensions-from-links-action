@@ -22,9 +22,8 @@ const replacer = new LinkReplacer(filesPath)
  * @param {string} filename - The path to the file to process
  */
 async function processFile(filename) {
-  
   const oldContent = readFileSync(filename, 'utf8')
-  
+
   const newContent = await replacer.transformMarkdownLinks(oldContent)
 
   if (oldContent !== newContent) {
@@ -38,7 +37,6 @@ async function main() {
     const files = readDirSync(filesPath)
 
     for (const file of files) {
-      
       const filename = file.toString()
       await processFile(filename)
     }
