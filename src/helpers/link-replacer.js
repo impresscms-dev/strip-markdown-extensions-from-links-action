@@ -26,57 +26,100 @@ class LinkReplacer {
    * @returns {Promise<string>} The transformed Markdown content with processed links
    */
   async transformMarkdownLinks(oldContent) {
-    // Store original links and their processed versions
     const linkMap = new Map()
-
-    // Configure remark with custom settings to preserve the original formatting
-    const processor = unified()
-      .use(remarkParse)  // Parse markdown to AST
-      .use(remarkGfm)    // Support GFM (GitHub Flavored Markdown)
-      .use(() => async (tree) => {
-        // Find all link nodes in the AST
-        const linkNodes = []
-        visit(tree, 'link', (node) => {
-          linkNodes.push(node)
-        })
-
-        // Process all links in parallel
-        const linkPromises = linkNodes.map(async (node) => {
-          const originalHref = node.url
-          const processedHref = await this.processLink(originalHref)
-
-          // Store the original and processed links for later reference
-          if (originalHref !== processedHref) {
-            linkMap.set(originalHref, processedHref)
-          }
-
-          // Update the node's URL in the AST
-          node.url = processedHref
-        })
-
-        // Wait for all link processing to complete
-        await Promise.all(linkPromises)
-      })
-      .use(remarkStringify, {
-        // Configure stringify to match the original format
-        bullet: '*',
-        emphasis: '_',
-        fences: true,
-        listItemIndent: 'one',
-        rule: '-',
-        ruleSpaces: false,
-        strong: '*'
-      })
-
-    // Process the markdown content
+    const processor = this.#configureRemarkProcessor(linkMap)
     const file = await processor.process(oldContent)
 
-    // Get the result as a string and remove any trailing newline that remark might add
+    return this.#formatResult(file, oldContent)
+  }
+
+  /**
+   * Configures the remark processor with all necessary plugins
+   *
+   * @param {Map} linkMap - Map to store original and processed links
+   * @returns {Object} Configured remark processor
+   * @private
+   */
+  #configureRemarkProcessor(linkMap) {
+    return unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(() => async (tree) => {
+        const linkNodes = this.#findLinkNodes(tree)
+        await this.#processLinkNodes(linkNodes, linkMap)
+      })
+      .use(remarkStringify, this.#getStringifyOptions())
+  }
+
+  /**
+   * Finds all link nodes in the AST
+   *
+   * @param {Object} tree - The AST tree
+   * @returns {Array} Array of link nodes
+   * @private
+   */
+  #findLinkNodes(tree) {
+    const linkNodes = []
+    visit(tree, 'link', (node) => {
+      linkNodes.push(node)
+    })
+    return linkNodes
+  }
+
+  /**
+   * Processes all link nodes in parallel
+   *
+   * @param {Array} linkNodes - Array of link nodes to process
+   * @param {Map} linkMap - Map to store original and processed links
+   * @returns {Promise} Promise that resolves when all links are processed
+   * @private
+   */
+  async #processLinkNodes(linkNodes, linkMap) {
+    const linkPromises = linkNodes.map(async (node) => {
+      const originalHref = node.url
+      const processedHref = await this.processLink(originalHref)
+
+      if (originalHref !== processedHref) {
+        linkMap.set(originalHref, processedHref)
+      }
+
+      node.url = processedHref
+    })
+
+    return Promise.all(linkPromises)
+  }
+
+  /**
+   * Gets the stringify options for remark
+   *
+   * @returns {Object} Stringify options
+   * @private
+   */
+  #getStringifyOptions() {
+    return {
+      bullet: '*',
+      emphasis: '_',
+      fences: true,
+      listItemIndent: 'one',
+      rule: '-',
+      ruleSpaces: false,
+      strong: '*'
+    }
+  }
+
+  /**
+   * Formats the result string, handling trailing newlines
+   *
+   * @param {Object} file - The processed file
+   * @param {string} oldContent - The original content
+   * @returns {string} The formatted result
+   * @private
+   */
+  #formatResult(file, oldContent) {
     let result = String(file)
     if (result.endsWith('\n') && !oldContent.endsWith('\n')) {
       result = result.slice(0, -1)
     }
-
     return result
   }
 
