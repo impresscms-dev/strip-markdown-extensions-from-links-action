@@ -28,27 +28,27 @@ class LinkInfo {
     )
     this.#data.set(
       'mimeType',
-      'mimeType' in initialData ? (initialData.mimeType !== null ? String(initialData.mimeType) : null) : null
+      'mimeType' in initialData ? (!initialData.mimeType ? null : String(initialData.mimeType)) : null
     )
     this.#data.set(
       'query',
-      'query' in initialData ? (initialData.query !== null ? String(initialData.query) : null) : null
+      'query' in initialData ? (!initialData.query ? null : String(initialData.query)) : null
     )
     this.#data.set(
       'fragment',
-      'fragment' in initialData ? (initialData.fragment !== null ? String(initialData.fragment) : null) : null
+      'fragment' in initialData ? (!initialData.fragment ? null : String(initialData.fragment)) : null
     )
     this.#data.set(
       'realFileName',
-      'realFileName' in initialData ? (initialData.realFileName !== null ? String(initialData.realFileName) : null) : null
+      'realFileName' in initialData ? (!initialData.realFileName ? null: String(initialData.realFileName)) : null
     )
     this.#data.set(
       'extension',
-      'extension' in initialData ? (initialData.extension !== null ? String(initialData.extension) : null) : null
+      'extension' in initialData ? (!initialData.extension ? null : String(initialData.extension)) : null
     )
     this.#data.set(
       'realUrl',
-      'realUrl' in initialData ? (initialData.realUrl !== null ? String(initialData.realUrl) : null) : null
+      'realUrl' in initialData ? (!initialData.realUrl ? null : String(initialData.realUrl)) : null
     )
     this.#data.set(
       'statusCode',
@@ -56,11 +56,11 @@ class LinkInfo {
     )
     this.#data.set(
       'error',
-      'error' in initialData ? (initialData.error !== null ? String(initialData.error) : null) : null
+      'error' in initialData ? (!initialData.error ? null : String(initialData.error)) : null
     )
     this.#data.set(
       'fileNameWithoutExtension',
-      'fileNameWithoutExtension' in initialData ? (initialData.fileNameWithoutExtension !== null ? String(initialData.fileNameWithoutExtension) : null) : null
+      'fileNameWithoutExtension' in initialData ? (!initialData.fileNameWithoutExtension ? null : String(initialData.fileNameWithoutExtension)) : null
     )
   }
 

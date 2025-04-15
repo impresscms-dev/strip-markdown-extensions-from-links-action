@@ -132,7 +132,7 @@ describe('createLocalLinkInfo', () => {
 
     const linkInfo = await createLocalLinkInfo(link)
 
-    expect(linkInfo.fileNameWithoutExtension).toBe('test-files%2Fmarkdown')
+    expect(linkInfo.fileNameWithoutExtension).toBe('test-files/markdown')
   })
 
   test('should set fileNameWithoutExtension correctly with base path', async () => {
@@ -151,9 +151,9 @@ describe('createLocalLinkInfo', () => {
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
     expect(linkInfo.exists).toBe(true)
-    expect(linkInfo.query).toBe('?a=b')
+    expect(linkInfo.query).toBe(null)
     expect(linkInfo.isLocal).toBe(true)
-    // Note: MIME type detection doesn't work reliably for files with special characters in names
+    expect(linkInfo.fileNameWithoutExtension).toBe(link)
   })
 
   test('should handle files with anchors that exist on filesystem', async () => {
@@ -163,7 +163,7 @@ describe('createLocalLinkInfo', () => {
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
     expect(linkInfo.exists).toBe(true)
-    expect(linkInfo.fragment).toBe('#section')
+    expect(linkInfo.fragment).toBe(null)
     expect(linkInfo.isLocal).toBe(true)
     // Note: MIME type detection doesn't work reliably for files with special characters in names
   })
@@ -175,8 +175,8 @@ describe('createLocalLinkInfo', () => {
 
     expect(linkInfo).toBeInstanceOf(LinkInfo)
     expect(linkInfo.exists).toBe(true)
-    expect(linkInfo.query).toBe('?a=b')
-    expect(linkInfo.fragment).toBe('#section')
+    expect(linkInfo.query).toBe(null)
+    expect(linkInfo.fragment).toBe(null)
     expect(linkInfo.isLocal).toBe(true)
     // Note: MIME type detection doesn't work reliably for files with special characters in names
   })

@@ -63,6 +63,22 @@ function makePossibleFilename(path, base) {
   return possibleFilename
 }
 
+function getUrlParts(link, realFileName) {
+  let url
+
+  const tmpLink =  realFileName ? link.substring(realFileName.length) : link
+
+  try {
+    url = new URL(tmpLink, 'file://relative-url.localhost/')
+
+    // eslint-disable-next-line no-unused-vars
+  } catch (e) {
+    return null
+  }
+
+  return [url.query ?? null, url.hash ?? null]
+}
+
 /**
  * Creates a LinkInfoEntity for a local file
  *
@@ -101,17 +117,7 @@ export default async function createLocalLinkInfo(link, base = null) {
 
   const mimeType = Filesystem.detectMimeType(realFileName)
 
-  let query = null
-  let fragment = null
-  try {
-    const url = new URL(link, 'file://relative-url.localhost/')
-    query = url.search || null
-    fragment = url.hash || null
-
-    // eslint-disable-next-line no-unused-vars
-  } catch (e) {
-
-  }
+  const [query, fragment] = getUrlParts(link, realFileName)
 
   let fileNameWithoutExtension = realFileName
 
@@ -124,7 +130,7 @@ export default async function createLocalLinkInfo(link, base = null) {
     fileNameWithoutExtension = fileNameWithoutExtension.substring(0, fileNameWithoutExtension.length - extension.length - 1)
   }
 
-  fileNameWithoutExtension = encodeURIComponent(fileNameWithoutExtension)
+  fileNameWithoutExtension = encodeURIComponent(fileNameWithoutExtension).replace(/%2F/g, '/')
 
   if (query) {
     fileNameWithoutExtension += query
