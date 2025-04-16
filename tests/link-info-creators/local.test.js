@@ -145,7 +145,7 @@ describe('createLocalLinkInfo', () => {
   })
 
   test('should handle files with query parameters that exist on filesystem', async () => {
-    const link = 'test-files/with-query.md?a=b'
+    const link = 'test-files/with-query.md%3Fa%3Db'
 
     const linkInfo = await createLocalLinkInfo(link)
 
