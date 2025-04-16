@@ -16,7 +16,7 @@ export default [
       jest: jestPlugin
     },
     rules: {
-      'no-unused-vars': 'error',
+      'no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
       'camelcase': 'off',
       'func-call-spacing': ['error', 'never'],
       'no-array-constructor': 'error',
@@ -24,7 +24,7 @@ export default [
       'prefer-const': 'error',
       'semi': ['error', 'never'],
       'no-useless-escape': 'off',
-      
+
       // Jest plugin rules
       'jest/no-disabled-tests': 'warn',
       'jest/no-focused-tests': 'error',
