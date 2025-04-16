@@ -6,7 +6,6 @@ import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globa
 import mockFs from 'mock-fs'
 import Filesystem from '../../src/helpers/filesystem.js'
 import mime from 'mime-types'
-import { resolve } from 'path'
 
 import fileTypeChecker from 'file-type-checker'
 
@@ -247,17 +246,17 @@ describe('Filesystem', () => {
 
     test('should handle invalid URLs gracefully', () => {
       // Mock the URL constructor to throw an error
-      const originalURL = global.URL;
+      const originalURL = global.URL
       global.URL = function() {
-        throw new Error('Invalid URL');
-      };
+        throw new Error('Invalid URL')
+      }
 
       try {
-        const result = Filesystem.findBestFilenameFromLink('invalid-url', null);
-        expect(result).toBeUndefined();
+        const result = Filesystem.findBestFilenameFromLink('invalid-url', null)
+        expect(result).toBeUndefined()
       } finally {
         // Restore the original URL constructor
-        global.URL = originalURL;
+        global.URL = originalURL
       }
     })
 
