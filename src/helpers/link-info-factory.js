@@ -50,7 +50,8 @@ class LinkInfoFactory {
         link = link.substring(base.length)
       }
 
-      const isLocal = !link.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//)
+      // Consider both protocol URLs (http://) and protocol-relative URLs (//) as non-local
+      const isLocal = !link.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//) && !link.startsWith('//')
 
       const LinkInfoInstance = isLocal
         ? await createLocalLinkInfo(link, base)
