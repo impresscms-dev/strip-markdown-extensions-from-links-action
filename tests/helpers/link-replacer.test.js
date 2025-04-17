@@ -21,14 +21,14 @@ describe('LinkReplacer', () => {
       '/test/path': {
         'document.md': 'This is a markdown file',
         'another.md': 'Another markdown file',
-        'index.html': '<html><body>Hello</body></html>'
+        'index.html': '<html lang="en"><body>Hello</body></html>'
       }
     })
 
     jest.spyOn(LinkInfoFactory, 'create').mockImplementation(async (link, _base) => {
 
       const isMarkdown = link.endsWith('.md')
-      const isLocal = !link.includes('://')
+      const isLocal = !link.includes('://') && !link.startsWith('//')
 
       return new LinkInfo({
         isLocal,
@@ -82,6 +82,15 @@ describe('LinkReplacer', () => {
       expect(result).toBe(link)
       expect(LinkInfoFactory.create).toHaveBeenCalledWith(link, '/test/path')
     })
+
+    test('should process relative links that start with a dot', async () => {
+      const link = './document.md'
+
+      const result = await replacer.processLink(link)
+
+      expect(result).toBe('./document')
+      expect(LinkInfoFactory.create).toHaveBeenCalledWith(link, '/test/path')
+    })
   })
 
   describe('transformMarkdownLinks', () => {
@@ -107,6 +116,50 @@ describe('LinkReplacer', () => {
       const result = await replacer.transformMarkdownLinks(content)
 
       expect(result).toBe('Check [markdown](document), [html](index.html), and [remote](https://example.com/)')
+    })
+
+    test('should not modify links inside code blocks', async () => {
+      const content = '~~~js\n// [](this.md)\n~~~'
+
+      const result = await replacer.transformMarkdownLinks(content)
+
+      expect(result).toBe('```js\n// [](this.md)\n```')
+    })
+
+    test('should transform relative links that start with a dot', async () => {
+      const content = 'Check out [this document](./document.md) and [this one](../another.md) too!'
+
+      const result = await replacer.transformMarkdownLinks(content)
+
+      expect(result).toBe('Check out [this document](./document) and [this one](../another) too!')
+    })
+
+    test('should transform relative inline links correctly', async () => {
+      const content = 'This is a paragraph with an [inline link](./inline.md) in the middle of text.'
+
+      const result = await replacer.transformMarkdownLinks(content)
+
+      expect(result).toBe('This is a paragraph with an [inline link](./inline) in the middle of text.')
+    })
+
+    test('should preserve .md extension in http/https URLs', async () => {
+      const content = 'Check these links: https://localhost/docs/readme.md and http://example.com/file.md'
+
+      const result = await replacer.transformMarkdownLinks(content)
+
+      // remark-gfm automatically adds angle brackets around URLs
+      // but the .md extension should be preserved
+      expect(result).toContain('https://localhost/docs/readme.md')
+      expect(result).toContain('http://example.com/file.md')
+    })
+
+    test('should treat protocol-relative URLs (starting with //) as non-local', async () => {
+      const content = 'Check this protocol-relative link: [example](//example.com/docs/readme.md)'
+
+      const result = await replacer.transformMarkdownLinks(content)
+
+      // Protocol-relative URLs should be treated as non-local and not modified
+      expect(result).toBe('Check this protocol-relative link: [example](//example.com/docs/readme.md)')
     })
   })
 })
