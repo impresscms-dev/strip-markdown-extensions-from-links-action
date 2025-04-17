@@ -23,16 +23,16 @@ on:
   push:
 
 jobs:
-  get_php_classes_list:
+  create_docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkouting project code...
         uses: actions/checkout@v4
 
       - name: Install PHP
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.4
           extensions: curl, gd, pdo_mysql, json, mbstring, pcre, session
           ini-values: post_max_size=256M
           coverage: none
@@ -42,14 +42,14 @@ jobs:
         run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
       - name: Generating documentation...
-        uses: impresscms-dev/generate-phpdocs-with-clean-phpdoc-md-action@v0.1.4
+        uses: impresscms-dev/generate-phpdocs-with-clean-phpdoc-md-action@v1
         with:
           class_root_namespace: ImpressCMS\
           included_classes: ImpressCMS\**
           output_path: ./docs/
 
       - name: Stripping file extensions...
-        uses: impresscms-dev/strip-markdown-extensions-from-links-action@v1.2.0
+        uses: impresscms-dev/strip-markdown-extensions-from-links-action@v2
         with:
           path: ./docs/
           # Optional: Ignore specific links in specific files
@@ -104,12 +104,12 @@ If you need to process files in multiple directories, you can run the action mul
 
 ```yaml
 - name: Process main documentation
-  uses: impresscms-dev/strip-markdown-extensions-from-links-action@v1.2.0
+  uses: impresscms-dev/strip-markdown-extensions-from-links-action@v1.1.4
   with:
     path: ./docs/
 
 - name: Process API documentation
-  uses: impresscms-dev/strip-markdown-extensions-from-links-action@v1.2.0
+  uses: impresscms-dev/strip-markdown-extensions-from-links-action@v1.1.4
   with:
     path: ./api-docs/
 ```
