@@ -14,20 +14,23 @@ class LinkReplacer {
    * Creates a new LinkReplacer instance
    *
    * @param {string} filesPath - The base path where Markdown files are located
+   * @param {import('./ignore-filter.js').default|null} ignoreFilter - Optional filter for ignoring certain links
    */
-  constructor(filesPath) {
+  constructor(filesPath, ignoreFilter = null) {
     this.filesPath = filesPath
+    this.ignoreFilter = ignoreFilter
   }
 
   /**
    * Transforms all Markdown links in the content by removing .md extensions
    *
    * @param {string} oldContent - The original Markdown content
+   * @param {string|null} filePath - The path of the file being processed (for ignore rules)
    * @returns {Promise<string>} The transformed Markdown content with processed links
    */
-  async transformMarkdownLinks(oldContent) {
+  async transformMarkdownLinks(oldContent, filePath = null) {
     const linkMap = new Map()
-    const processor = this.#configureRemarkProcessor(linkMap)
+    const processor = this.#configureRemarkProcessor(linkMap, filePath)
     const file = await processor.process(oldContent)
 
     return this.#formatResult(file, oldContent)
@@ -37,16 +40,17 @@ class LinkReplacer {
    * Configures the remark processor with all necessary plugins
    *
    * @param {Map} linkMap - Map to store original and processed links
+   * @param {string|null} filePath - The path of the file being processed (for ignore rules)
    * @returns {Object} Configured remark processor
    * @private
    */
-  #configureRemarkProcessor(linkMap) {
+  #configureRemarkProcessor(linkMap, filePath = null) {
     return unified()
       .use(remarkParse)
       .use(remarkGfm)
       .use(() => async (tree) => {
         const linkNodes = this.#findLinkNodes(tree)
-        await this.#processLinkNodes(linkNodes, linkMap)
+        await this.#processLinkNodes(linkNodes, linkMap, filePath)
       })
       .use(remarkStringify, this.#getStringifyOptions())
   }
@@ -71,12 +75,18 @@ class LinkReplacer {
    *
    * @param {Array} linkNodes - Array of link nodes to process
    * @param {Map} linkMap - Map to store original and processed links
+   * @param {string|null} filePath - The path of the file being processed (for ignore rules)
    * @returns {Promise} Promise that resolves when all links are processed
    * @private
    */
-  async #processLinkNodes(linkNodes, linkMap) {
+  async #processLinkNodes(linkNodes, linkMap, filePath = null) {
     const linkPromises = linkNodes.map(async (node) => {
       const originalHref = node.url
+
+      if (this.ignoreFilter && filePath && this.ignoreFilter.shouldIgnore(originalHref, filePath)) {
+        return
+      }
+
       const processedHref = await this.processLink(originalHref)
 
       if (originalHref !== processedHref) {

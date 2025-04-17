@@ -8,6 +8,9 @@ inputs:
   path:
     description: Where to look for files to do operation
     required: true
+  ignore-filter:
+    description: Pattern-based filter to ignore specific links in specific files. Each line should be in the format 'link-pattern:file-pattern'. Both sides accept glob style syntax. Quotes can be used for patterns with special characters.
+    required: false
 
 runs:
   using: 'node20'
