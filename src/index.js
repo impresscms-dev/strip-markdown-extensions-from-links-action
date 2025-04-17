@@ -32,7 +32,10 @@ try {
   async function processFile(filename) {
     const oldContent = readFileSync(filename, 'utf8')
 
-    const newContent = await replacer.transformMarkdownLinks(oldContent, filename)
+    const newContent = await replacer.transformMarkdownLinks(
+      oldContent,
+      filename
+    )
 
     if (oldContent !== newContent) {
       debug(filename + ' updated')
