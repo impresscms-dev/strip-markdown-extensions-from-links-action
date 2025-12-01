@@ -31,7 +31,7 @@
     "file-type": "^21.0.0",
     "file-type-checker": "^1.1.6",
     "js-yaml": "^4.1.0",
-    "mime-types": "^3.0.1",
+    "mime-types": "^3.0.2",
     "minimatch": "^10.1.1",
     "recursive-readdir-sync": "^1.0.6",
     "remark": "^15.0.1",
