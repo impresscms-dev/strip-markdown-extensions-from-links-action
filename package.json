@@ -26,7 +26,7 @@
   "author": "Raimondas Rimkevičius (aka MekDrop)",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^3.0.0",
+    "@actions/core": "^3.0.1",
     "@actions/github": "^9.0.0",
     "file-type": "^22.0.0",
     "file-type-checker": "^1.1.6",
