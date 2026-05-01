@@ -27,7 +27,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^3.0.1",
-    "@actions/github": "^9.0.0",
+    "@actions/github": "^9.1.1",
     "file-type": "^22.0.1",
     "file-type-checker": "^1.1.6",
     "js-yaml": "^4.1.1",
