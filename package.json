@@ -44,7 +44,7 @@
   "devDependencies": {
     "@jest/globals": "^30.4.1",
     "@vercel/ncc": "^0.44.1",
-    "eslint": "^10.6.0",
+    "eslint": "^10.8.0",
     "eslint-plugin-jest": "^29.15.4",
     "jest": "^30.4.2",
     "mock-fs": "^5.2.0",
